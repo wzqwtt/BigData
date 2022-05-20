@@ -1,26 +1,3 @@
----
-title: Zookeeper案例—服务器动态上下线监听
-top: false
-cover: false
-toc: true
-mathjax: false
-date: 2022-03-12 09:22:47
-author:
-img:
-coverImg:
-password:
-summary:
-tags:
-  - Zookeeper
-  - 分布式
-categories: Zookeeper
-keywords:
-  - 大数据
-  - Zookeeper
-  - 分布式
----
-
-
 
 > 前几篇blog介绍了Zookeeper的安装与客户端命令行与API操作，本节将使用Zookeeper的API操作做一个案例，这个案例是：监听服务器动态上下线
 
