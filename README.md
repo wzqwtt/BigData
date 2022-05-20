@@ -52,6 +52,25 @@
 
 
 
+# 三、Hive
+
+<img src="./Hive/img/Hive_logo.png">
+
+| 模块         | Blog                                                         |
+| ------------ | ------------------------------------------------------------ |
+| Hive概述     | [Hive的基本概念](./Hive/1、Hive的基本概念.md)                |
+| 安装部署     | [Hive安装部署并替换derby为MySQL](./Hive/2、Hive安装部署并替换derby为MySQL.md) |
+| Hive操作数据 | [Hive数据类型](./Hive/3、Hive数据类型)                       |
+|              | [HiveSQL DDL数据定义](./Hive/4、Hive中的DDL数据定义.md)      |
+|              | [Hive 导入与导出数据](./Hive/5、Hive导入与导出数据.md)       |
+|              | [HiveSQL DML数据查询](./Hive/6、Hive中的DML数据查询.md)      |
+|              | [Hive 分区表与分桶表](./Hive/7、Hive中的分区表与分桶表.md)   |
+|              | [Hive 常用函数汇总以及练习](./Hive/8、Hive常用函数.md)       |
+|              | [Hive 如何自定义函数](./Hive/9、Hive如何自定义函数.md)       |
+|              | [Hive 压缩和存储](./Hive/10、Hive中的压缩和存储.md)          |
+| 调优         | [Hive企业级调优](./Hive/11、Hive企业级调优.md)               |
+| 实战         | [Hive 实战！分析视频网站TopN数据](./Hive/12、Hive实战演练——分析视频网站TopN数据.md) |
+
 
 
 # 参考资料
