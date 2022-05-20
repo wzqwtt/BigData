@@ -1,7 +1,3 @@
-[toc]
-
------
-
 `NameNode`简称为`NN`，`SecondaryNameNode`简称为`2NN`
 
 # 一、NN和2NN工作机制
@@ -21,7 +17,9 @@
 ## 2、NN和2NN的工作机制
 
 下面一张图解释了`NN`和`2NN`的工作机制：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414172753450.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 它分为两个阶段：
 
 **第一阶段：`NameNode`启动：**
@@ -49,9 +47,13 @@
 我们可以查看`NN`所在的`hadoop102`和`2NN`所在的`hadoop104`他们的`fsimage`和`edits`文件：
 
 `hadoop102`路径：`/opt/module/hadoop-3.1.3/data/dfs/name/current`
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041417412092.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `hadoop104`路径：`/opt/module/hadoop-3.1.3/data/dfs/namesecondary/current`
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414174352683.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 可以发现`NN`比`2NN`多一个文件`edits_inprogress...`，如果`NN`宕机，那么`2NN`可以帮助恢复`NN`元数据，但是只能恢复一部分，缺少的部分正是该文件。该文件存储的是正在执行的操作
 
 **文件解读：**
@@ -72,12 +74,15 @@ hdfs oiv -p 文件类型 -i 镜像文件 -o 转换后文件输出路径
 hdfs oiv -p XML -i fsimage_0000000000000000394 -o /opt/software/fsimage.xml
 ```
 执行完成之后，会输出一个文件
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414175523208.png)
+
 下载到桌面：
 ```shell
 sz fsimages.xml
 ```
 打开之后：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414175624281.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 ## 3、oev查看Edits文件
@@ -97,6 +102,7 @@ hdfs oev -p XML -i edits_inprogress_0000000000000000398 -o /opt/software/edits.x
 sz edits.xml
 ```
 因为现在没有执行任何操作，这个文件还是挺干净的：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/202104141800014.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 三、CheckPoint时间设置

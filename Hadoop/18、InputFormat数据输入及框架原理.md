@@ -1,8 +1,3 @@
-[toc]
-
-----
-
-
 # 一、切片与MapTask并行度决定机制
 `MapTask`的并行度决定`Map`阶段的任务处理并发读，进而影响到整个`Job`的处理速度，引入两个概念：
 
@@ -26,9 +21,11 @@
 	- 最后提交`Job`，返回提交状态
 
 如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041719511357.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 三、切片执行流程解析
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210417195131576.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 四、FileInputFormat切片机制
@@ -95,8 +92,10 @@ From the real demand for more close to the enterprise
 ```
 # 六、CombineTextInputFormat切片机制
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041720132094.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210417201328607.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210417201335860.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210417201345765.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 

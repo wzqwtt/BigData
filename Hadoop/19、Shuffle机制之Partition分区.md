@@ -1,11 +1,8 @@
-[toc]
-
-----
-
-
 # 一、Partition是个什么东西？
 `Map`之后、`Reduce`之前的数据处理过程统称为`Shuffle`机制
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210418172419410.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `Partition`分区是`Shuffle`的一部分功能，它的作用是==按照条件把结果输出到不同的文件（分区）中。==
 
 如果通过`job.setNumReduceTasks(x)`设置多个`分区`，`Partition`的默认实现是根据`key`的`hashCode`对`ReduceTask`个数取模得到的，用户没法控制哪个`key`存储到哪个分区，`Partition`的默认实现代码是：
@@ -24,9 +21,11 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
 ## 1、自定义类继承<font color='red'>Partition</font>，重写<font color='red'>getPartition()</font>方法
 
 如果要自定义`Partition`，那么就需要写一个类，继承`Partition`抽象类，实现它的`getPartition`方法
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419152908866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 通常在重写的方法写分区逻辑，根据传进来的`K-V`键值对，指定哪个值，最终存到哪个文件中去
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419141535173.png)
 
 ## 2、指定自定义的<font color='red'>Partition</font>
@@ -53,7 +52,9 @@ job.setNumReduceTasks(个数Int值);
 需要求[前几篇博客](https://blog.csdn.net/lesileqin/article/details/115771389)中的序列化的需求一样：统计手机号的上行流量、下行流量与总流量，但是最终要按照手机的归属地不同输出到不同的文件中去。
 
 输入数据：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419142752654.png)
+
 ```java
 1	13736230513		192.196.100.1	www.atguigu.com		2481	24681	200
 2	13846544121		192.196.100.2						264		0		200
@@ -80,6 +81,7 @@ job.setNumReduceTasks(个数Int值);
 ```
 
 期望输出数据（手机号 136、137、138、139 开头都分别放到一个独立的 4 个文件中，其他开头的放到一个文件中）：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419142816196.png)
 
 那么只需要自定义一个`分区`，实现它的方法就好了呀
@@ -129,5 +131,6 @@ job.setNumReduceTasks(5);
 ```
 
 执行后，五个文件：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419143557898.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 

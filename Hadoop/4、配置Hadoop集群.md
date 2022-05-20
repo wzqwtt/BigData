@@ -1,5 +1,3 @@
-[toc]
-
 # 一、Hadoop目录文件结构
 查看`hadoop`的目录结构：
 ```bash
@@ -40,6 +38,7 @@ drwxr-xr-x. 4 wzq wzq     31 9月  12 2019 share
 
 # 三、集群配置规划
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402170837911.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 需要注意的是：
 
 - `NameNode`和`SecondaryNameNode`不安装在同一个虚拟机
@@ -67,7 +66,9 @@ drwxr-xr-x. 4 wzq wzq     31 9月  12 2019 share
 
 # 五、配置集群
 进入到`$HADOOP_HOME/etc/hadoop`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402171653864.png)
+
 ## 1、核心配置文件 <font color='red'> core-site.xml </font>
 
 ```bash
@@ -206,7 +207,9 @@ vim mapred-site.xml
 xsync /opt/module/hadoop-3.1.3/etc/hadoop/
 ```
 效果如下：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402180052256.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 然后去另外两台机器验证有没有分发成功
 
 # 六、配置历史服务器<font color='red'> 端口：19888</font>
@@ -269,7 +272,9 @@ xsync /opt/module/hadoop-3.1.3/etc/hadoop/
 ## 4、查看历史服务器是否启动成功
 
 使用`jps`命令查看：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404095833518.png)
+
 搞个`wordcount`程序测试历史服务器：
 
 ```bash
@@ -277,14 +282,19 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 ```
 
 回车等待运行成功之后，打开`http://hadoop103:8088`，可以看到有一个任务已经成功运行：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/202104041001210.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 点击蓝色的`history`，就可以查看历史服务器的内容了：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404100405348.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 上图中可以看到点击`history`后跳转到了`19888`端口
 
 但是值得我们注意的是，右下角有个`logs`，这里是查看程序运行的日志，现在点击一下：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404100449632.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 报错了，这是因为还没有配置日志聚集，下面来配置一下。
 
 ----
@@ -292,7 +302,9 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 # 七、配置日志的聚集
 
 如下图所示，每个`hadoop服务器`都有自己的日志，但是如果程序出了bug，在单个服务器上查看日志是很不方便的，所以`hadoop`就做了`日志聚集`的功能，他把所有服务器的日志都聚集到了`hdfs`
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404101248515.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 日志聚集的好处就是可以方便查看程序的运行详情，方便开发调试
 
 ## 1、配置yarn-site.xml
@@ -331,6 +343,7 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 [wzq@hadoop102 hadoop-3.1.3]$ xsync etc/hadoop/
 ```
 
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404101747651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 ## 3、重启yarn和HistoryServer
@@ -356,6 +369,7 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 ```
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404102509981.png)
+
 启动`historyserver`：
 
 ```bash
@@ -374,6 +388,7 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 ```
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404102728369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 执行`wordcount`程序：
 
 ```bash
@@ -381,11 +396,17 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount 
 ```
 
 在程序运行期间，可以打开`yarn`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404102921801.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 可以看到正在执行，等待执行完成，点击`History`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404102953580.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 再点进去`logs`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404103011434.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 日志聚集配置成功
 
 

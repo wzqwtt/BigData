@@ -1,6 +1,3 @@
-[toc]
-
------
 
 # 一、下载MapReduce的WordCount
 要想了解`MapReduce`编程规范，直接看一下官方代码是怎么写的就知道了
@@ -15,10 +12,12 @@
 ```shell
 sz hadoop-mapreduce-examples-3.1.3.jar
 ```
-使用反编译工具查看`jar`包内容，[点我免费下载`反编译工具`](https://download.csdn.net/download/lesileqin/16681366)
+使用反编译工具查看`jar`包内容，[点我下载`反编译工具`](https://download.csdn.net/download/lesileqin/16681366)
 
 打开反编译工具，把`jar`包拖进去，打开后是这样的（这里博主直接点到了`wordcount`代码块）：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210415161056692.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 # 二、常用数据序列化类型
 看一下`WordCount`代码：
 ```java
@@ -85,8 +84,11 @@ public class WordCount
 }
 ```
 从上面的代码中，我们可以看到有很多之前没有见过的数据类型，这些类型都是`Hadoop`自己的类型，下表总结了`Java`类型与`Hadoop`数据类型的对比：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210415161801226.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 可以发现除了`String`对应的是`Text`，其他的类型只不过是在最后加了关键字`Writable`，所以`Hadoop`的数据类型还是很好记忆与掌握的
+
 # 三、MapReduce编程规范
 
 从上面的案例代码中可以看到整个`WordCount`程序分为了三个部分，下面把他们的方法签名都抽取出来：

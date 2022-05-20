@@ -1,7 +1,3 @@
-[toc]
-
-
------
 
 # 一、需求分析
 **统计给定文本中每一个单词出现的个数**
@@ -32,7 +28,7 @@ wtt	2
 wzq	2
 xue	1
 ```
-根据[上一篇博客](https://blog.csdn.net/lesileqin/article/details/115729267)写到的`MapReduce`编程规范，应该将该程序分为三个部分：
+根据[上一篇博客](15、图解MapReduce编程规范.md)写到的`MapReduce`编程规范，应该将该程序分为三个部分：
 - `Mapper`类：负责数据的拆分
 	* 将内容先转换为`String`
 	* 使用`String.split()`将这一行的数据切分成单词
@@ -50,6 +46,7 @@ xue	1
 	- 提交作业
 
 如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416164646868.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 
@@ -80,6 +77,7 @@ xue	1
 新建一个包：`com.wzq.mapreduce.wordcount`
 
 在此包下，新建三个类：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416164837513.png)
 
 # 三、编写程序
@@ -96,14 +94,19 @@ public class WordCountMapper extends Mapper
 按住`ctrl+b`，点击`Mapper`查看源码：
 
 首先看`Contxt`这个抽象内部类：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416165718940.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 然后找到`run`方法，这个方法是用于执行`Mapper`操作的：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416165518218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 在源码中`setup`和`cleanup`都是空方法，什么都不做：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416165853930.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ### 2）编写Mapper类代码
-该类需要继承`Mapper`类，而在[上一篇博客](https://blog.csdn.net/lesileqin/article/details/115729267)中提到需要加四个泛型，分别是两个`k-v`键值对
+该类需要继承`Mapper`类，而在[上一篇博客](15、图解MapReduce编程规范.md)中提到需要加四个泛型，分别是两个`k-v`键值对
 
 前两个泛型是第一个`k-v`对应的是：每一行数据的偏移量与该行的内容，所以，可以写成`LongWritable,Text`
 
@@ -115,6 +118,7 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 然后重写`map`方法，直接输入`map`按下回车，直接生成
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416170339296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 因为传进来的是一行数据，并且`Text`数据类型并没有很丰富的操作，所以首先把它转换为`String`，然后利用`split(" ")`切割这一行数据，最终得到一个字符串数组：
 
 ```java
@@ -209,9 +213,13 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 public class WordCountReducer extends Reducer
 ```
 按住`ctrl+B`，点击`Reducer`，查看源码：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416171724505.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 看`run`方法：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416172021971.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ### 2）编写Reducer类
 该类需要继承`Reducer`，同样的他也需要加四个泛型，两个`k-v`键值对
 
@@ -224,7 +232,9 @@ public class WordCountReducer extends Reducer<Text, IntWritable,Text,IntWritable
 ```
 
 这个类需要重写`reduce`方法，直接输入`reduce`按下回车：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416172557751.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 在这个方法里面，我们只需要做两件事：循环遍历`Iterable<IntWritable>`集合，把值相加；最终通过`Context`把值输出，这里同样做一次变量提升：
 
 ```java
@@ -307,11 +317,17 @@ public class WordCountDriver {
 
 ## 1、本地测试
 这时候代码都已经写好了，直接点击右键运行：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416173010789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 打开指定的输出文件夹：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416173141501.png)
+
 直接打开：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416173155904.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `WordCount`案例成功！
 
 ## 2、提交到集群并测试
@@ -359,13 +375,21 @@ FileOutputFormat.setOutputPath(job,new Path(args[1]));
 ```
 
 然后点击`package`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416174032113.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 等待一会儿：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416174132853.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 打开这个`jar`包所在目录：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416174243181.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 把他拖到`xshell`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416174321305.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 然后输入以下命令测试：
 
 ```shell
@@ -374,5 +398,7 @@ hadoop jar wc.jar com.wzq.mapreduce.wordcount.WordCountDriver /input /output
 jar后面的部分要写`Driver`类的全类名
 
 等待片刻：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416174701742.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 测试成功

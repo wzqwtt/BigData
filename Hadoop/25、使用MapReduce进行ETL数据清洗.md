@@ -1,6 +1,4 @@
-[toc]
 
----
 # 一、什么是ETL数据清洗？
 `ETL`英文名：`Extract-Transform-Load`，用来讲数据从来源端经过抽取（`Extract`）、转换（`Transform`）、加载（`Load`）至目的端的过程
 
@@ -13,7 +11,9 @@
 需求：去除日志中字段个数小于等于11的日志
 
 输入数据（字段间用空格分隔）：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210421141301926.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 期望输出的每个字段都大于11
 
 
@@ -63,5 +63,6 @@ public class LogMapper extends Mapper<LongWritable, Text,Text, NullWritable> {
 job.setNumReduceTasks(0);
 ```
 测试：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210421141536979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 

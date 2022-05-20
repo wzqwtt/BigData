@@ -1,10 +1,10 @@
-[toc]
 
------
 
 # 一、DataNode工作机制
 直接看一张图：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210415095425696.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 它的工作流程是：
 - 当`DataNode`启动后，必须向`NameNode`汇报自己的块信息，然后定期（6个小时）扫描、上报自己所有块的信息。块信息包括：数据、数据长度、校验和（即数据完整性）、时间戳
 - 每个`DataNode`必须定期向`NameNode`汇报说：我还活着。这个过程叫做心跳，心跳每三秒一次；如果超过==10分钟+30秒== `NameNode`没有收到`DataNode`的心跳，就会认为`DataNode`挂掉了

@@ -1,7 +1,3 @@
-[toc]
-
-------
-
 
 # 一、序列化概述
 
@@ -18,7 +14,9 @@
 `Java`序列化机制是由`Serializable`实现的，它的序列化会附加各种校验信息、头信息、继承体系等，如果用于网络传输，那么要传的数据太大了
 
 `Hadoop`序列化机制只附加了简单校验信息，数据量小，有利于网络传输；如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041620512092.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `Hadoop`序列化的特点：
 
 - 紧凑：高效使用存储空间
@@ -41,7 +39,9 @@
 ==统计每一个手机号耗费的总上行流量、总下行流量、总流量==
 
 输入数据格式：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416205651681.png)
+
 数据：
 ```java
 1	13736230513		192.196.100.1	www.atguigu.com		2481	24681	200
@@ -69,8 +69,10 @@
 ```
 
 输出数据格式：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416205713350.png)
- 在`Map`阶段：
+
+在`Map`阶段：
 - 需要给四个泛型，前两个泛型就是固定的偏移量和这一行的数据，即`LongWritable,Text`
 - 后两个泛型用`手机号`表示`key`，自定义`bean`实现序列化接口表示`上行流量、下行流量、总流量`
 - 在此阶段，首先需要读取一行数据，按照`\t`切分数据，抽取三个数据，再封装到`context`
@@ -81,7 +83,9 @@
 - 在此阶段，只需要累加上、下行流量，得到总流量，最后封装就好了
 
 如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416210312881.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ## 2、撸代码
 ### 1）实现序列化
 自定义`bean`对象，写入上行、下行、总流量属性，并添加`setter与getter`方法：
@@ -159,7 +163,7 @@ public class FlowBean implements Writable {
     }
 ```
 ### 2）Mapper、Reducer、Driver编写
-[按照`MapReduce`编程规范](https://blog.csdn.net/lesileqin/article/details/115729267?spm=1001.2014.3001.5501)，应该分为三个部分：
+[按照`MapReduce`编程规范](15、图解MapReduce编程规范.md)，应该分为三个部分：
 
 `Mapper`类:
 ```java
@@ -280,5 +284,7 @@ public class FlowDriver {
 ### 3）测试
 
 至此代码编写完毕，点击运行，查看输出结果：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210416210802758.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 也可以打包上传到`hadoop`集群测试哦~

@@ -5,10 +5,14 @@
 # 一、Yarn是什么？
 
 在现实生产环境中，大数据处理服务器众多（如下图所示），那么如果管理集群资源、如何给任务合理的分配资源就是个问题，`Yarn`的作用就是解决这些问题
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210427092350931.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `Yarn`是一个资源调度平台，负责为运算程序提供服务器运算资源，相当于一个分布式的操作系统平台，而`MapReduce`等运算程序则相当于运行于操作系统之上的应用程序
 # 二、Yarn基础架构
+
 `Yarn`主要由`ResourceManager`、`NodeManager`、`ApplicationMaster`、`Container`等组件组成：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210427092624724.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 - `ResourceManager(RM)`：相当于集群的老大，负责处理客户端的请求，如果有任务进来，它负责分配`NodeManager`、并监控`NodeManager`，启动和监控`ApplicationMaster`，负责资源的分配与调度
@@ -18,6 +22,7 @@
 
 # 三、Yarn工作机制
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210427093416293.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 如上图所示，下面是`Yarn`工作机制刨析：
 - 当`MR`程序提交到客户端所在节点，它会启动`YarnRunner`，向`RM`申请一个`Application`
 - `RM`接收请求并返回一个`资源提交路径`，该程序将运行所需资源提交到`HDFS`上
@@ -37,6 +42,7 @@
 
 ## 1、HDFS、YARN、MapReduce三者关系
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210427094034143.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 - `HDFS`负责文件的上传，读取等工作
 - `MapReduce`负责运算，对大数据进行处理
 - `Yarn`负责调度一切，分配资源等

@@ -1,12 +1,11 @@
-[toc]
-
-----
 # 一、OutputFormat是做什么的？
 
 `OutputFormat`可以说是`MapReduce`处理过程的最后一步，由它负责把输出的信息输送到哪个文件或者哪个数据库，等等
 
 `OutputFormat`是`MapReduce`输出的基类，所有实现`MapReduce`输出都实现了`OutputFormat`接口，下图为`OutputFormat`的几个常见实现类（请忽略画横线的，那是我自定义的）：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021042014165838.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 它的默认输出格式为`TextOutputFormat`
 
 # 二、实现自定义OutputFormat的步骤 <font color='red'>套路</font>
@@ -211,4 +210,5 @@ public class LogDriver {
 ```
 
 测试：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210420143851628.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)

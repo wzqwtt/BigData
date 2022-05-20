@@ -1,19 +1,20 @@
-[toc]
-
----
 # 一、使用Xshell连接Linux
 **连接之前一定要关闭防火墙！！！！！！！！！**
 
 打开`Xshell`，点击`新建`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402145142532.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 输入主机名称和ip地址，然后点击用户身份验证：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/202104021452383.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 输入用户名和密码，这里建议不要用`root`用户直接登陆：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402145338176.png)
 
 最后点击确定，连接成功是这个样子的：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021040215161830.png)
 
 hadoop102、hadoop103同理
@@ -27,18 +28,26 @@ hadoop102、hadoop103同理
 sudo chmod 777 /opt/software
 ```
 更改完权限之后：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402152904391.png)
+
 然后打开`Xshell`的文件传输工具，开始上传两个压缩包：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402153024891.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 上传完成之后：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402153049176.png)
+
 然后使用把`JDK`解压到`/opt/module`下：
 ```bash
 sudo tar -zxvf jdk-8u212-linux-x64.tar.gz -C /opt/module/
 ```
+
 进入`/opt/module`下查看：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402153407267.png)
+
 然后配置`JAVA`的环境变量，进入到文件`/etc/profile.d`，新建一个文件`my_env.sh`
 
 ```bash
@@ -58,6 +67,7 @@ sudo source /etc/profile
 ```
 
 最后输入`java -version`校验是否安装成功：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402153732422.png)
 
 # 三、安装Hadoop
@@ -66,7 +76,9 @@ sudo source /etc/profile
 sudo tar -zxvf hadoop-3.1.3.tar.gz -C /opt/module/
 ```
 进入`/opt/module`下查看：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402154057900.png)
+
 安装成功，然后配置`hadoop`的环境变量
 
 同样在`/etc/profile.d/my_enc.sh`后追加：
@@ -83,6 +95,7 @@ export PATH=$PATH:$HADOOP_HOME/sbin
 sudo source /etc/profile
 ```
 运行`hadoop`：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402154327971.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 四、配置集群分发
@@ -138,7 +151,9 @@ chmod +x xsync
 xsync /home/wzq/bin
 ```
 到`hadoop103`上查看，成功拷贝：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402160840823.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 然后将脚本复制到`/bin`中，以便全局调用
 ```bash
 cd /home/wzq/bin
@@ -181,5 +196,5 @@ ssh-copy-id hadoop104
 最后在`hadoop103和104`以`wzq（非root）`的身份都执行一下以上命令
 
 最后在`hadoop104`上免密登陆一下`hadoop102`：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402163521929.png)
 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402163521929.png)

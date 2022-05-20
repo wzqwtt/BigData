@@ -76,7 +76,9 @@ Hadoop Distributed File System，简称HDFS，是一个分布式文件系统
 ### 2）YARN架构概述
 
 Yet Another Resource Negotiator简称YARN，另一种资源协调者，是Hadoop的**资源管理器**
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210402133433762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ### 3）MapReduce架构概述
 
 MapReduce将计算过程分为两个阶段：**Map和Reduce**

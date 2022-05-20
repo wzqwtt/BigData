@@ -1,11 +1,8 @@
-[toc]
-
-
-------
-
 # 一、命令大全
 在终端输入`hadoop fs`或者`hdfs dfs`可以查看所有的命令：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210405162806930.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 如果想要知道某个命令具体是怎么用的，可以使用`-help`输出这个命令参数
 
 比如：

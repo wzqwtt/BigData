@@ -1,4 +1,3 @@
-[toc]
 
 ==**在配置两个脚本之前，需要配置好ssh免密登陆**==
 
@@ -53,6 +52,7 @@ chmod 777 myhadoop.sh
 ```
 
 ## 2、脚本解读
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404110113388.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 
@@ -68,11 +68,13 @@ myhadoop.sh stop
 ```bash
 myhadoop.sh start
 ```
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021040411050489.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 然后使用`jps`命令查看是否启动成功：
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404110529158.png)
+
 这只是在`hadoop102`上查看了是否成功，同时也需要去`hadoop103和104`上使用`jps`命令查看，如果我们有非常多的服务器，逐个查看实在太麻烦了，所以编写一下，查看所有服务进程的脚本
 
 # 二、查看三台服务器Java进程脚本 <font color='red'> jpsall</font>
@@ -101,12 +103,15 @@ chmod 777 myhadoop.sh
 ```
 
 ## 2、脚本解读
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210404111051227.png)
 
 ## 3、测试
 
 直接在控制台输入：`jpsall`
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/202104041112302.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 这样就直接查看到了所有主机的进程！
 
 
@@ -117,5 +122,6 @@ chmod 777 myhadoop.sh
 ```bash
 [wzq@hadoop102 ~]$ xsync /home/wzq/bin/
 ```
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021040411141743.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 

@@ -1,12 +1,10 @@
-[toc]
-
-
-------
 
 # 一、HDFS写数据流程
 ## 1、文件写入流程
 下图为文件写入流程剖析图：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414152834733.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 想要上传一个`200M`的文件`ss.avi`到`HDFS`，它的写入流程是这样的：
 
 - 客户端创建`Distributed FileSystem`，该模块向`HDFS`的老大哥`NameNode`请求上传文件`ss.avi`
@@ -25,24 +23,32 @@
 <font color='red'>节点距离：两个节点到达最近的功能祖先的距离总和</font>
 
 现实生活中，服务器都会在`机架`上放着，然后形成一个`图`，看下图：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414160630405.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 我们要想计算节点距离，可以把他抽象成一个图：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414161903349.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 如果我们要算机器`d1->r2->n1`到`d2->r6->n0`的距离，则需要找到他们的共同祖先，然后把把路径相加就可以了，如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414162154288.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 则：`Distance(d1/r2/n1,d2/r6/no) = 6`
 
 
 ## 3、机架感知（副本存储节点选择）
 
 `HDFS`写文件会把第一个副本存储在客户端所处节点上，第二个副本在另一个机架上的随机一个节点，第三个副本在第二个副本所在机架的另外一个随机节点上。如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414162511320.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 
 # 二、HDFS读数据流程
 `HDFS`读数据流程如下图所示：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210414162551729.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 - 客户端通过`DistributedFileSystem`向`NameNode`请求下载文件，`NameNode`通过查询元数据，找到文件块所在的`DataNode`地址
 - 挑选一台`DataNode`（就近原则，然后随机）服务器，请求读取数据
 - `DataNode`开始传输数据给客户端（从磁盘里面读取数据输入流，以`Packet`为单位来做校验）

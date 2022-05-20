@@ -1,7 +1,3 @@
-[toc]
-
-----
-
 # 一、ReduceJoin 是什么
 在现实世界，很多事情都是有关联的，这些关联的事务被抽象成数据的话，如果放在一个文件中是很麻烦的，所以人们一般会用多个文件进行存储，`Join`做的工作就是：把这些相关的文件都关联到一起。==现在可能非常抽象，请耐心往下看案例分析==
 
@@ -14,9 +10,13 @@
 
 ## 1、需求分析
 现在我们有两个表（以文件方式输入）：一个订单表，一个商品表，这两个表用`pid`关联了起来：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210420195454688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 最终期望输出的数据格式为：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210420195523218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `order`订单表数据：
 ```java
 1001	01	1
@@ -213,6 +213,7 @@ public class TableReducer extends Reducer<Text,TableBean,TableBean, NullWritable
 }
 ```
 `Driver`类是固定的套路，这里不贴出，直接看结果：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210420201143240.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 
@@ -240,7 +241,7 @@ public class TableReducer extends Reducer<Text,TableBean,TableBean, NullWritable
 
 # 五、案例实操
 
-[本博客的案例依旧采用上一篇的博客的案例](https://blog.csdn.net/lesileqin/article/details/115917135)
+[本博客的案例依旧采用上一篇的博客的案例](23、MapTask与ReduceTask工作机制.md)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210421132558280.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
@@ -356,5 +357,6 @@ public class TableMapper extends Mapper<LongWritable, Text, Text, NullWritable> 
 ```
 
 测试结果：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210421133027794.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 

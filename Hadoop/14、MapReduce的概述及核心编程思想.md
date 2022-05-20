@@ -1,9 +1,7 @@
-[toc]
 
-
-----
 
 # 一、MapReduce学习思维导图
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210415144857474.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 二、MapReduce定义
@@ -42,9 +40,13 @@
 上面的任务做完了，就需要专门派两个人来统计`a-p`与`p-z`开头的单词，把相同的单词后面数字相加，这样就得到了最后的结果。这个阶段是`Reduce`聚合阶段，这两个人做的是`ReduceTask`任务。
 
 如下图所示，就是上述的过程：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041515313320.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 换成专业的说法，看下图：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210415153227666.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 综上所述：
 
 - 分布式的运算程序王王需要分成至少两个阶段

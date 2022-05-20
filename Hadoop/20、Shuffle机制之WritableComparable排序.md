@@ -1,10 +1,8 @@
-[toc]
-
-----
-
 # 一、WritableComparable排序是什么东西？
 `Map`之后、`Reduce`之前的数据处理过程统称为`Shuffle`机制
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210418172419410.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 `WritableComparable`排序是`Shuffle`的一部分功能，它的作用是==如果自定义数据类型做为key，则实现该接口，对所需要的字段进行排序。==
 
 
@@ -13,19 +11,23 @@
 默认排序是按照==字典顺序==排序的，且实现该排序的方法是==快速排序==
 
 看一下`WritableComparable`接口：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041915483251.png)
+
 既然该接口继承了两个接口：
 
-- `Writable`：是实现序列化的接口，[这个在之前的博客中有解释及对应的案例，感兴趣的读者可以看一下](https://blog.csdn.net/lesileqin/article/details/115771389)
+- `Writable`：是实现序列化的接口，[这个在之前的博客中有解释及对应的案例，感兴趣的读者可以看一下](17、MapReduce序列化.md)
 - `Comparable`：实现比较的接口，隶属于`java.util.*`包
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419155210621.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
+- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419155210621.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 二、排序分类
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419155412474.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
 # 三、案例分析
 ## 1、全排序与二次排序
-根据[前几篇博客（序列化）](https://blog.csdn.net/lesileqin/article/details/115771389)中的案例再进一步：**对总流量进行倒叙排序，如果总流量相等，则按照上行流量倒叙排序**
+根据[前几篇博客（序列化）](17、MapReduce序列化.md)中的案例再进一步：**对总流量进行倒叙排序，如果总流量相等，则按照上行流量倒叙排序**
 
 输入数据为：序列化案例处理后的数据：
 
@@ -36,7 +38,9 @@
 ```
 
 输出数据为对总流量从大到小排序后的数据
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2021041916040252.png)
+
 ### 1）需求分析
 `MapReduce`默认对`key`进行排序，那么在`Mapper`中输出的泛型就可以调换一下位置：
 ```java
@@ -133,7 +137,9 @@ FileOutputFormat.setOutputPath(job, new Path("D:\\BigData_workspace\\output\\out
 ```
 
 执行之后的输出结果：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419161837531.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
+
 ## 2、区内排序（又叫部分排序）
 现在对上面的案例，再进一步要求：**把排序输出的结果按照不同的手机号前缀输出到不同的文件中**
 ### 1）需求分析
@@ -187,5 +193,5 @@ FileOutputFormat.setOutputPath(job, new Path("D:\\BigData_workspace\\output\\out
 ```
 
 最终运行测试：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419163607807.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210419163607807.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlc2lsZXFpbg==,size_16,color_FFFFFF,t_70)
