@@ -2,7 +2,8 @@
 小白大数据学习笔记 :star:
 
 
-## 一、Hadoop
+
+# 一、Hadoop
 
 ![](./Hadoop/img/hadoop_logo.png)
 
@@ -38,4 +39,19 @@
 
 
 
-## 参考资料
+# 二、Zookeeper
+
+<img src="./Zookeeper/img/Apache_ZooKeeper_logo.png" height="150px">
+
+| 模块          | Blog                                                         |
+| ------------- | ------------------------------------------------------------ |
+| Zookeeper概述 | [Zookeeper是个什么东西？](1、Zookeeper是个什么东西？.md)     |
+| 安装部署      | [Zookeeper 分布式安装部署](2、Zookeeper本地与分布式安装.md)  |
+| 如何操作？    | [Zookeeper 客户端命令行与API操作](3、Zookeeper客户端命令行与API操作.md) |
+| 案例实操      | [Zookeeper 案例：服务器动态上下线监听](4、Zookeeper案例—服务器动态上下线监听.md) |
+
+
+
+
+
+# 参考资料
