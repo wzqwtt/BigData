@@ -45,10 +45,10 @@
 
 | 模块          | Blog                                                         |
 | ------------- | ------------------------------------------------------------ |
-| Zookeeper概述 | [Zookeeper是个什么东西？](1、Zookeeper是个什么东西？.md)     |
-| 安装部署      | [Zookeeper 分布式安装部署](2、Zookeeper本地与分布式安装.md)  |
-| 如何操作？    | [Zookeeper 客户端命令行与API操作](3、Zookeeper客户端命令行与API操作.md) |
-| 案例实操      | [Zookeeper 案例：服务器动态上下线监听](4、Zookeeper案例—服务器动态上下线监听.md) |
+| Zookeeper概述 | [Zookeeper是个什么东西？](./Zookeeper/1、Zookeeper是个什么东西？.md)     |
+| 安装部署      | [Zookeeper 分布式安装部署](./Zookeeper/2、Zookeeper本地与分布式安装.md)  |
+| 如何操作？    | [Zookeeper 客户端命令行与API操作](./Zookeeper/3、Zookeeper客户端命令行与API操作.md) |
+| 案例实操      | [Zookeeper 案例：服务器动态上下线监听](./Zookeeper/4、Zookeeper案例—服务器动态上下线监听.md) |
 
 
 
