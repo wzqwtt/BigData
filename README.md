@@ -118,6 +118,34 @@
 
 
 
+# 六、Spark（Scala版）
+
+<img src="./Spark/img/Apache_Spark_logo.png" height="150">
+
+| 模块            | Blog                                                         |
+| --------------- | ------------------------------------------------------------ |
+| Spark 前戏      | [Spark 之前一定要会的Scala！](./Spark/1、Scala学习笔记.md)   |
+| Spark 极速入门  | [Spark 概述及WordCount案例](./Spark/2、Spark-概述及WordCount.md) |
+|                 | [Spark 搭建Local、StandAlone、Yarn三种模式运行环境](./Spark/3、Spark-搭建运行环境.md) |
+| Spark Core      | [如何做到分布式计算？](./Spark/4、模拟分布式计算.md)         |
+|                 | [Java IO流与Spark RDD至简的关系](./Spark/5、Java-IO流与Spark-RDD的关系.md) |
+|                 | [Spark RDD是啥？及其执行原理](./Spark/6、Spark-RDD及其执行原理.md) |
+|                 | [Spark 创建RDD以及设置它的并行度与分区](./Spark/7、Spark-创建RDD以及它的并行度与分区.md) |
+|                 | [Spark RDD转换算子速查手册以及案例解析](./Spark/8、Spark-转换算子速查手册以及案例解析.md) |
+|                 | [Spark RDD行动算子速查手册以及案例解析](./Spark/9、Spark-RDD行动算子速查手册以及案例解析.md) |
+|                 | [Spark RDD序列化](./Spark/10、Spark-RDD序列化.md)            |
+|                 | [Spark RDD依赖关系](./Spark/11、Spark RDD依赖关系.md)        |
+|                 | [Spark RDD持久化](./Spark/12、Spark-RDD持久化.md)            |
+|                 | [Spark RDD分区器](./Spark/13、Spark-RDD分区器.md)            |
+|                 | [Spark 累加器与广播变量](./Spark/14、Spark-中的累加器与广播变量.md) |
+|                 | [Spark Core 案例实操——分析电商网站行为数据](./Spark/15、SparkCore-案例实操.md) |
+| Spark SQL       | [SparkSQL 概述、DataFrame、DataSet](./Spark/16、SparkSQL-概述、DataFrame、DataSet.md) |
+|                 | [SparkSQL 用户自定义函数](./Spark/17、SparkSQL-用户自定义函数.md) |
+|                 | [SparkSQL 数据的加载和保存](./Spark/18、SparkSQL-数据的加载和保存.md) |
+| Spark Streaming | 待更                                                         |
+
+
+
 
 
 # 参考资料
@@ -131,3 +159,4 @@
 - [Flume 官网](https://flume.apache.org/)
 - [Kafka 官网](https://kafka.apache.org/)
 - [Kafka Eagle 官网](https://www.kafka-eagle.org/)
+- [Spark 官网](https://spark.apache.org/docs/3.0.0/)
