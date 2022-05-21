@@ -121,3 +121,13 @@
 
 
 # 参考资料
+
+
+
+- [尚硅谷大数据学习视频以及资料](https://space.bilibili.com/302417610)
+- [Hadoop 官网](https://hadoop.apache.org/)
+- [Zookeeper 官网](https://zookeeper.apache.org/)
+- [Hive 官网](https://hive.apache.org/)
+- [Flume 官网](https://flume.apache.org/)
+- [Kafka 官网](https://kafka.apache.org/)
+- [Kafka Eagle 官网](https://www.kafka-eagle.org/)
