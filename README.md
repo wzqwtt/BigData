@@ -134,7 +134,7 @@
 |                 | [Spark RDD转换算子速查手册以及案例解析](./Spark/8、Spark-转换算子速查手册以及案例解析.md) |
 |                 | [Spark RDD行动算子速查手册以及案例解析](./Spark/9、Spark-RDD行动算子速查手册以及案例解析.md) |
 |                 | [Spark RDD序列化](./Spark/10、Spark-RDD序列化.md)            |
-|                 | [Spark RDD依赖关系](./Spark/11、Spark RDD依赖关系.md)        |
+|                 | [Spark RDD依赖关系](./Spark/11、Spark-RDD依赖关系.md)        |
 |                 | [Spark RDD持久化](./Spark/12、Spark-RDD持久化.md)            |
 |                 | [Spark RDD分区器](./Spark/13、Spark-RDD分区器.md)            |
 |                 | [Spark 累加器与广播变量](./Spark/14、Spark-中的累加器与广播变量.md) |
