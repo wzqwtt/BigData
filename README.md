@@ -86,4 +86,38 @@
 
 
 
+# 五、Kafka
+
+
+
+<img src="./Kafka/img/kafka-logo.jpg" height="150">
+
+
+
+| 模块                 | Blog                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| Kafka极速入门        | [Kafka 是个什么东西？](./Kafka/1、Kafka-概述.md)             |
+|                      | [Kafka 分布式安装部署](./Kafka/2、Kafka-分布式安装部署.md)   |
+|                      | [Kafka 常用命令行操作](./Kafka/3、Kafka-常用命令行操作.md)   |
+| Kafka Producer       | [Producer 生产者消息发送原理](./Kafka/4、Kafka-Producer-生产者消息发送原理.md) |
+|                      | [Producer 异步与同步以及分区API操作](./Kafka/5、Kafka-Producer-异步与同步以及分区API操作.md) |
+|                      | [Producer 生产者的生产经验](./Kafka/6、Kafka-Producer-生产者的生产经验.md) |
+| Kafka Broker         | [Broker 工作流程以及节点服役和退役](./Kafka/8、Kafka-Broker-工作流程以及节点服役和退役.md) |
+|                      | [Broker 副本机制详解](./Kafka/9、Kafka-Broker-副本机制详解.md) |
+|                      | [Broker 文件存储、清理机制以及高效读写数据](./Kafka/10、Kafka-Broker-文件存储、清理机制以及高效读写数据.md) |
+| Kafka Consumer       | [Consumer 消费者工作原理](./Kafka/11、Kafka-Consumer消费者工作原理.md) |
+|                      | [Consumer 消费者API操作](./Kafka/12、Kafka-Consumer消费者API操作.md) |
+|                      | [Consumer 消费者组分区的分配以及再平衡](./Kafka/13、Kafka-Consumer消费者组分区的分配以及再平衡.md) |
+|                      | [Offset位移详解](./Kafka/14、Kafka-Offset位移详解.md)        |
+| 大屏监控Kafka        | [Kafka Eagle(EAFS)监控安装部署](./Kafka/15、Kafka-Eagle监控安装部署.md) |
+| Kafka-Kraft          | [Kafka-Kraft 模式的安装与部署](./Kafka/16、Kafka-Kraft模式的安装与部署.md) |
+| Kafka 与外部系统集成 | [Kafka集成Flume](./Kafka/17、Kafka集成Flume.md)              |
+|                      | Kafka集成Spark，留坑                                         |
+|                      | Kafka集成Flink，留坑                                         |
+|                      | Kafka集成Spring Boot，留坑                                   |
+
+
+
+
+
 # 参考资料
