@@ -109,7 +109,7 @@
 |                      | [Consumer 消费者API操作](./Kafka/12、Kafka-Consumer消费者API操作.md) |
 |                      | [Consumer 消费者组分区的分配以及再平衡](./Kafka/13、Kafka-Consumer消费者组分区的分配以及再平衡.md) |
 |                      | [Offset位移详解](./Kafka/14、Kafka-Offset位移详解.md)        |
-| 大屏监控Kafka        | [Kafka Eagle(EAFS)监控安装部署](./Kafka/15、Kafka-Eagle监控安装部署.md) |
+| 大屏监控Kafka        | [Kafka Eagle(EFAK)监控安装部署](./Kafka/15、Kafka-Eagle监控安装部署.md) |
 | Kafka-Kraft          | [Kafka-Kraft 模式的安装与部署](./Kafka/16、Kafka-Kraft模式的安装与部署.md) |
 | Kafka 与外部系统集成 | [Kafka集成Flume](./Kafka/17、Kafka集成Flume.md)              |
 |                      | Kafka集成Spark，留坑                                         |
