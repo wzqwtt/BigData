@@ -9,3 +9,5 @@
 - `cluster.sh`：用户行为日志采集启停脚本
 - `gmall.sql`：用户业务数据数据库结构脚本
 - 模拟生成业务数据jar包
+- `maxwell-1.29.2.tar.gz`：尚硅谷特制版maxwell，增加了**日期**参数，方便做这个项目，真正做项目请到Maxwell官网下载安装包
+- `mxw.sh`：Maxwell启停脚本
