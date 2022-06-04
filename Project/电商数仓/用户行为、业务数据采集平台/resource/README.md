@@ -11,3 +11,6 @@
 - 模拟生成业务数据jar包
 - `maxwell-1.29.2.tar.gz`：尚硅谷特制版maxwell，增加了**日期**参数，方便做这个项目，真正做项目请到Maxwell官网下载安装包
 - `mxw.sh`：Maxwell启停脚本
+- `gen_import_config.py`：生成某个数据库下单张表的DataX配置文件
+- `gen_import_config.sh`：生成所有全量同步表的DataX配置文件
+- `mysql_to_hdfs.sh`：全量表数据同步脚本
