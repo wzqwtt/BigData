@@ -120,13 +120,14 @@
 
 # 六、HBase
 
-<img src="./HBase/img/hbase_logo_with_orca_large.png" height="150" />
+<img src="./HBase/img/hbase_logo_with_orca_large.png" height="120" />
 
 
 
-| 模块 | Blog                                                         |
-| ---- | ------------------------------------------------------------ |
-| 概述 | [关于HBase你应该知道这些！](./HBase/1、关于HBase你应该知道这些.md) |
+| 模块          | Blog                                                         |
+| ------------- | ------------------------------------------------------------ |
+| 概述          | [关于HBase你应该知道这些！](./HBase/1、关于HBase你应该知道这些.md) |
+| 上手操作HBase | [搭建HBase分布式环境](./HBase/2、搭建HBase分布式环境.md)     |
 
 
 
