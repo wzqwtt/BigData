@@ -118,7 +118,23 @@
 
 
 
-# 六、Spark（Scala版）
+# 六、HBase
+
+<img src="./HBase/img/hbase_logo_with_orca_large.png" height="150" />
+
+
+
+| 模块 | Blog                                                         |
+| ---- | ------------------------------------------------------------ |
+| 概述 | [关于HBase你应该知道这些！](./HBase/1、关于HBase你应该知道这些.md) |
+
+
+
+
+
+
+
+# 七、Spark（Scala版）
 
 <img src="./Spark/img/Apache_Spark_logo.png" height="150">
 
@@ -177,3 +193,6 @@
 - [Kafka 官网](https://kafka.apache.org/)
 - [Kafka Eagle 官网](https://www.kafka-eagle.org/)
 - [Spark 官网](https://spark.apache.org/docs/3.0.0/)
+- [HBase官方文档](https://hbase.apache.org/2.3/book.html)
+- [DataX 官方文档](https://github.com/alibaba/DataX)
+- [Maxwell 官方文档](https://maxwells-daemon.io/)
