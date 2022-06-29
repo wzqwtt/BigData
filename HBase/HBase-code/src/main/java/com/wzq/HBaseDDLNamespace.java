@@ -124,22 +124,19 @@ public class HBaseDDLNamespace {
     public static void main(String[] args) throws IOException {
         // 测试创建namespace
         // 应该先保证连接没问题，再来调用相关方法
-//        createNamespace("wzq");
+        createNamespace("wzq");
 
         // 测试获取所有可用的namespace
-//        String[] namespaces = listNamespace();
-//        for (String namespace : namespaces) {
-//            System.out.println(namespace);
-//        }
-
-        // 测试删除指定的namespace
-//        deleteNamespace("wzq");
+        String[] namespaces = listNamespace();
+        for (String namespace : namespaces) {
+            System.out.println(namespace);
+        }
 
         // 测试修改指定的namespace的user属性
         modifyNamespace("wzq");
 
-        // 其他code
-        System.out.println("其他code");
+        // 测试删除指定的namespace
+        deleteNamespace("wzq");
 
         // 关闭HBase连接
         HBaseConnection.closeConnection();
