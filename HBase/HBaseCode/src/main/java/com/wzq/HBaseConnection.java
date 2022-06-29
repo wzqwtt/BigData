@@ -58,5 +58,4 @@ public class HBaseConnection {
         HBaseConnection.closeConnection();
 
     }
-
 }

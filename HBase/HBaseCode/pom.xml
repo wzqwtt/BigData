@@ -5,8 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wzq</groupId>
-    <artifactId>HBase-code</artifactId>
+    <artifactId>HBaseCode</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <!-- 导入HBase依赖，服务端部署在服务器，所以这里导入的是客户端的包 -->
     <dependencies>

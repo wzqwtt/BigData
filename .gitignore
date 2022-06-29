@@ -1,0 +1,12 @@
+/.idea/.gitignore
+/.idea/BigData.iml
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/modules.xml
+/.idea/codeStyles/Project.xml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml
+/.idea/compiler.xml
+/HBase/HBase-code/HBase-code.iml
+/.idea/misc.xml
+/HBase/HBaseCode/HBaseCode.iml
+/HBase/HBaseCode/target/
