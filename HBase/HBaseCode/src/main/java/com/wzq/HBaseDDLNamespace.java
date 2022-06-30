@@ -1,6 +1,5 @@
 package com.wzq;
 
-import jdk.nashorn.internal.codegen.Namespace;
 import org.apache.hadoop.hbase.NamespaceDescriptor;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
@@ -8,6 +7,7 @@ import org.apache.hadoop.hbase.client.Connection;
 import java.io.IOException;
 
 public class HBaseDDLNamespace {
+
     // 声明一个静态属性获取HBase连接
     public static Connection connection = HBaseConnection.connection;
 
