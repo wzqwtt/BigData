@@ -40,6 +40,18 @@ public class ThreadCreate2 {
         Thread t2 = new Thread(thread05);
         t2.setName("线程2");
         t2.start();
+
+        // 匿名内部类的方式
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 100; i++) {
+                    if (i % 2 == 0) {
+                        System.out.println(Thread.currentThread().getName() + ": 偶数 " + i);
+                    }
+                }
+            }
+        }, "线程3").start();
     }
 
 }
