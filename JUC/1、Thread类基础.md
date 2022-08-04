@@ -269,7 +269,7 @@ public class ThreadWindowTest1 {
 
 
 
-## 1、方法一：同步代码块 synchronized
+## 1、方法一：同步代码块
 
 这种方法就是在run方法中，把所有线程使用的共享变量都用`synchronized`包裹起来：
 
@@ -281,7 +281,7 @@ synchronized (同步监视器) {
 
 需要注意的是：
 
--  操作共享数据的代码，就是需要被同步的代码 --> 不能包含多了，也不能包含代码少了
+- 操作共享数据的代码，就是需要被同步的代码 --> 不能包含多了，也不能包含代码少了
 
 - 共享数据：多个线程共同操作的变量。比如：上述卖票案例的ticket变量就是共享数据
 
@@ -401,7 +401,128 @@ public class ThreadWindowTest {
 
 
 
-## 2、方法二：
+## 2、方法二：同步方法
+
+如果操作共享数据的代码完整的声明在一个方法中，不妨将此方法声明为同步的
+
+需要注意的是：
+
+- 同步方法仍然涉及到同步监视器（锁），只是不需要我们显示的声明
+
+- 非静态的同步方法，同步监视器是：`this`
+
+- 静态的同步方法，同步监视器是：当前类本身
+
+
+
+使用基于Runnable的方法：
+
+```java
+package com.wzq.base;
+
+class Window2 implements Runnable {
+
+    private int ticket = 100;
+
+    @Override
+    public void run() {
+        while (true) {
+            if (ticket <= 0) {
+                System.out.println("暂无余票！");
+                break;
+            }
+            show();
+        }
+    }
+
+    // 此刻同步监视器为this
+    private synchronized void show() {
+        if (ticket > 0) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println(Thread.currentThread().getName() + "卖票，票号为：" + ticket);
+            ticket--;
+        }
+    }
+}
+
+public class ThreadWindowTest2 {
+
+    public static void main(String[] args) {
+        Window2 w2 = new Window2();
+
+        Thread t1 = new Thread(w2, "窗口1");
+        Thread t2 = new Thread(w2, "窗口2");
+        Thread t3 = new Thread(w2, "窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+```
+
+
+
+使用基于继承Thread的方式：
+
+```java
+package com.wzq.base;
+
+class Window3 extends Thread {
+
+    private static int ticket = 100;
+
+    @Override
+    public void run() {
+        while (true) {
+            if (ticket <= 0) {
+                System.out.println("暂无余票！");
+                break;
+            }
+            show();
+        }
+    }
+
+    // 同步方法，此刻同步监视器为 当前类对象 Window3.class
+    private static synchronized void show() {
+        if (ticket > 0) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + "卖票，票号：" + ticket);
+            ticket--;
+        }
+    }
+
+    // 构造方法，传递线程name
+    public Window3(String name) {
+        super(name);
+    }
+
+}
+
+public class ThreadWindowTest3 {
+    public static void main(String[] args) {
+        Window3 t1 = new Window3("窗口1");
+        Window3 t2 = new Window3("窗口2");
+        Window3 t3 = new Window3("窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+
+```
 
 
 
