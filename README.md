@@ -130,6 +130,7 @@
 | 上手操作HBase | [搭建HBase分布式环境](./HBase/2、搭建HBase分布式环境.md)     |
 |               | [HBase Shell操作快速入门！](./HBase/3、HBase-Shell操作.md)   |
 |               | [HBase DDL API操作](./HBase/4、HBase-DDL-API操作.md)         |
+|               | [HBase DML API操作](./HBase/5、HBase-DML-API操作.md)         |
 |               | 在更！                                                       |
 
 

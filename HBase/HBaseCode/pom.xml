@@ -34,5 +34,19 @@
             <version>3.0.1-b06</version>
         </dependency>
 
+        <!-- HBase 服务端 -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>2.4.11</version>
+            <!-- 排除hbase2.4.11版本的javax.el包 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.el</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 </project>
