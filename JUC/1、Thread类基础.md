@@ -31,8 +31,6 @@ public enum State {
 
 ![](img/2022-08-03-22-02-10-image.png)
 
-
-
 # 二、线程的创建
 
 ## 1、继承Thread类方式
@@ -180,8 +178,6 @@ new Thread(new Runnable() {
 }, "线程3").start();).start();
 ```
 
-
-
 # 三、Thread类常用方法
 
 本节中的测试代码可以在[JUCCode ThreadMethodTest](./JUCCode/src/main/java/com/wzq/base/ThreadMethodTest.java)文件中找到
@@ -210,7 +206,202 @@ new Thread(new Runnable() {
 
 # 四、线程的同步
 
+本节代码可以在[JUCCode ThreadWindowTest1.java](./JUCCode/src/main/java/com/wzq/base/ThreadWindowTest1.java)中找到
 
+在本节开始之前，先做一个小案例：有三个窗口卖票，总票数为100张
+
+那我们创建三个线程当作三个窗口呗，还是很好写的：
+
+```java
+
+package com.wzq.base;
+
+class Window1 implements Runnable {
+
+    private int ticket = 100;
+
+    @Override
+    public void run() {
+        while (true) {
+            if (ticket > 0) {
+                // 线程睡眠100毫秒，模拟线程安全问题
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(Thread.currentThread().getName() + "卖票，票号为" + ticket);
+                ticket--;
+            } else {
+                System.out.println("暂无余票！");
+                break;
+            }
+        }
+    }
+}
+
+public class ThreadWindowTest1 {
+
+    public static void main(String[] args) {
+        Window1 window = new Window1();
+        Thread t1 = new Thread(window, "窗口1");
+        Thread t2 = new Thread(window, "窗口2");
+        Thread t3 = new Thread(window, "窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+```
+
+但是这样做会出现卖错票、重票的问题，即线程安全问题：
+
+![](img/2022-08-04-16-48-19-image.png)
+
+这种问题出现的原因是：当其中一个线程操作ticket变量的时候，其他线程也参与了进来也开始操作车票了，因为这个ticket变量是共享变量，因此出现了线程安全问题
+
+
+
+解决线程安全问题的手段是：**线程的同步机制**，即当某线程操作共享变量的时候，其他线程不可以进行操作
+
+
+
+## 1、方法一：同步代码块 synchronized
+
+这种方法就是在run方法中，把所有线程使用的共享变量都用`synchronized`包裹起来：
+
+```java
+synchronized (同步监视器) {
+    // 需要被同步的代码
+}
+```
+
+需要注意的是：
+
+-  操作共享数据的代码，就是需要被同步的代码 --> 不能包含多了，也不能包含代码少了
+
+- 共享数据：多个线程共同操作的变量。比如：上述卖票案例的ticket变量就是共享数据
+
+- 同步监视器，俗称：锁。任何一个类的对象，都可以充当锁。但是**多个线程必须共有一把锁！**
+
+- 在实现Runnable接口创建多线程的方式中，可以考虑使用`this`充当监视器（锁）
+
+- 在继承Thread类创建多线程的方式中，要慎用`this`充当监视器（锁），可以考虑使用当前类充当（`Window.class`）
+
+
+
+有了方法论的指导，就可以写代码了，使用基于Runnable的方式：
+
+```java
+package com.wzq.base;
+
+class Window1 implements Runnable {
+
+    private int ticket = 100;
+    Object obj = new Object();  // 锁
+
+    @Override
+    public void run() {
+        while (true) {
+            // 同步代码块
+            // 同样，这把锁可以是当前对象，即this
+            // synchronized (this) {}
+            synchronized (obj) {
+                if (ticket > 0) {
+                    // 线程睡眠100毫秒，模拟线程安全问题
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(Thread.currentThread().getName() + "卖票，票号为" + ticket);
+                    ticket--;
+                } else {
+                    System.out.println("暂无余票！");
+                    break;
+                }
+            }
+        }
+    }
+}
+
+public class ThreadWindowTest1 {
+
+    public static void main(String[] args) {
+        Window1 window = new Window1();
+        Thread t1 = new Thread(window, "窗口1");
+        Thread t2 = new Thread(window, "窗口2");
+        Thread t3 = new Thread(window, "窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+```
+
+基于继承Thread类的方式：
+
+```java
+package com.wzq.base;
+
+class Window extends Thread {
+
+    private static int ticket = 100;
+
+    private static Object obj = new Object();
+
+    @Override
+    public void run() {
+        while (true) {
+            // synchronized (obj) {
+            synchronized (Window.class) {
+                if (ticket > 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread().getName() + "卖票，票号为: " + ticket);
+                    ticket--;
+                } else {
+                    System.out.println("已无多余的票");
+                    break;
+                }
+            }
+        }
+    }
+
+    // 构造方法：用于给线程起名字
+    public Window(String name) {
+        super(name);
+    }
+
+}
+
+public class ThreadWindowTest {
+
+    public static void main(String[] args) {
+        Window w1 = new Window("窗口1");
+        Window w2 = new Window("窗口2");
+        Window w3 = new Window("窗口3");
+
+        w1.start();
+        w2.start();
+        w3.start();
+    }
+
+}
+```
+
+
+
+## 2、方法二：
 
 
 

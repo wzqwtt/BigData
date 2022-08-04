@@ -3,7 +3,9 @@ package com.wzq.base;
 /**
  * 例子：创建三个窗口卖票，总票数为100张，使用继承Thread类的方式
  * <p>
- * 存在线程安全问题，待解决
+ * 存在线程安全问题
+ * <p>
+ * 使用同步代码块解决继承Thread类的方式线程安全问题
  *
  * @author wzq
  * @create 2022-08-03 15:46
@@ -12,15 +14,25 @@ class Window extends Thread {
 
     private static int ticket = 100;
 
+    private static Object obj = new Object();
+
     @Override
     public void run() {
         while (true) {
-            if (ticket > 0) {
-                System.out.println(Thread.currentThread().getName() + "卖票，票号为: " + ticket);
-                ticket--;
-            } else {
-                System.out.println("已无多余的票");
-                break;
+            // synchronized (obj) {
+            synchronized (Window.class) {
+                if (ticket > 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread().getName() + "卖票，票号为: " + ticket);
+                    ticket--;
+                } else {
+                    System.out.println("已无多余的票");
+                    break;
+                }
             }
         }
     }
