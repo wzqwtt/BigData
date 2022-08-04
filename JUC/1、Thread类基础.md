@@ -213,7 +213,6 @@ new Thread(new Runnable() {
 那我们创建三个线程当作三个窗口呗，还是很好写的：
 
 ```java
-
 package com.wzq.base;
 
 class Window1 implements Runnable {
@@ -263,11 +262,7 @@ public class ThreadWindowTest1 {
 
 这种问题出现的原因是：当其中一个线程操作ticket变量的时候，其他线程也参与了进来也开始操作车票了，因为这个ticket变量是共享变量，因此出现了线程安全问题
 
-
-
 解决线程安全问题的手段是：**线程的同步机制**，即当某线程操作共享变量的时候，其他线程不可以进行操作
-
-
 
 ## 1、方法一：同步代码块
 
@@ -290,8 +285,6 @@ synchronized (同步监视器) {
 - 在实现Runnable接口创建多线程的方式中，可以考虑使用`this`充当监视器（锁）
 
 - 在继承Thread类创建多线程的方式中，要慎用`this`充当监视器（锁），可以考虑使用当前类充当（`Window.class`）
-
-
 
 有了方法论的指导，就可以写代码了，使用基于Runnable的方式：
 
@@ -399,8 +392,6 @@ public class ThreadWindowTest {
 }
 ```
 
-
-
 ## 2、方法二：同步方法
 
 如果操作共享数据的代码完整的声明在一个方法中，不妨将此方法声明为同步的
@@ -412,8 +403,6 @@ public class ThreadWindowTest {
 - 非静态的同步方法，同步监视器是：`this`
 
 - 静态的同步方法，同步监视器是：当前类本身
-
-
 
 使用基于Runnable的方法：
 
@@ -467,8 +456,6 @@ public class ThreadWindowTest2 {
 }
 ```
 
-
-
 使用基于继承Thread的方式：
 
 ```java
@@ -520,13 +507,128 @@ public class ThreadWindowTest3 {
         t3.start();
     }
 }
+```
+
+## 3、方法三：Lock锁
+
+出现这种方式的锁是因为synchronized容易出现死锁，所谓死锁就是：不同的线程分别占用对方需要的同步资源不放弃，都在等待对方放弃自己需要的同步资源，就形成了线程的死锁
+
+出现死锁以后，不会出现异常，不会报错，只是所有的线程都处于阻塞状态，程序无法继续进行。在使用同步的时候，应该尽全力避免死锁的出现。
 
 
+
+死锁的code在[JUCCode DeadLock.java](./JUCCode/src/main/java/com/wzq/base/DeadLock.java)中，大家可以自己体会，不建议写，万一写熟练了怎么办……
+
+
+
+所以就诞生了Lock锁的方式：
+
+- 从JDK 5.0开始，Java提供了更强大的线程同步机制--通过显式定义同步锁对象来实现同步。同步锁使用Lock对象充当
+
+- java.util.concurrent.locks.Lock接口是控制多个线程对共享资源进行访问的工具。锁提供了对共享资源的独占访问，每次只能有一个线程对Lock对象加锁，线程开始访问共享资源之前应先获得Lock对象
+
+- ReentrantLock类实现了Lock，它拥有与 synchronized相同的并发性和内存语义，在实现线程安全的控制中，比较常用的是 Reentrantlock，可以显式加锁、释放锁
+
+其实现方式是这样的：
+
+```java
+class A implements Runnable {
+    // 1、实例化ReentrantLock对象
+    private ReentrantLock lock = new ReentrantLock();
+
+    @Override
+    public void run() {
+        try {
+            // 2、上锁
+            lock.lock();
+            // ... code
+        } finally {
+            // 3、释放锁
+            lock.unlock();
+        }
+    }
+}
+```
+
+卖票案例：
+
+```java
+package com.wzq.base;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+class Window4 implements Runnable {
+
+    private int ticket = 100;
+    // 1、实例化对象
+    private ReentrantLock lock = new ReentrantLock();
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                // 2、加锁
+                lock.lock();
+                if (ticket > 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread().getName() + "卖票，票号为：" + ticket);
+                    ticket--;
+                } else {
+                    System.out.println("暂无余票！");
+                    break;
+                }
+            } finally {
+                // 3、解锁
+                lock.unlock();
+            }
+        }
+    }
+}
+
+public class ThreadWindowTest4 {
+
+    public static void main(String[] args) {
+        Window4 w = new Window4();
+
+        Thread t1 = new Thread(w, "窗口1");
+        Thread t2 = new Thread(w, "窗口2");
+        Thread t3 = new Thread(w, "窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
 ```
 
 
 
-## 3、单例模式的线程安全
+## 4、总结
+
+有以下一个问题需要解答：
+
+- synchronized与lock的异同：
+  
+  - 相同点：二者都可以解决线程安全问题
+  
+  - 不同点：
+    
+    - syschronized机制在执行完相应的代码后，自动释放锁
+    
+    - lock需要手动开锁（启动同步），手动解锁（关闭同步）
+
+
+
+使用同步的顺序：Lock---> 同步代码块（已经进入了方法体，分配了相应资源 ) --->同步方法（在方法体之外)
+
+
+
+# 五、单例模式的线程安全
 
 只需要声明getInstance方法是`synchronized`的就可以了：
 
@@ -550,9 +652,21 @@ class Singleton {
 
 
 
+# 六、案例
 
+**案例：** 银行有一个账户，有两个储户分别向同一个账户存3000元，每次存1000块，存3次。每次存完打印账户余额
 
+code：
 
+- 实现Runnable的code在[JUCCode AccountTest.java](./JUCCode/src/main/java/com/wzq/base/AccountTest.java)中
+
+- 单例模式+继承Thread类的code在[JUCCode AccountTest1.java](./JUCCode/src/main/java/com/wzq/base/AccountTest1.java)中
+
+- 单例模式+lock锁+实现Runnable类的code在[JUCCode AccountTest2.java](./JUCCode/src/main/java/com/wzq/base/AccountTest2.java)中
+
+最终效果：
+
+![](img/2022-08-05-00-03-41-image.png)
 
 # 参考资料
 
