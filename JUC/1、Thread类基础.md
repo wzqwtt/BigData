@@ -526,6 +526,34 @@ public class ThreadWindowTest3 {
 
 
 
+## 3、单例模式的线程安全
+
+只需要声明getInstance方法是`synchronized`的就可以了：
+
+```java
+class Singleton {
+    // 构造器私有化
+    private Singleton() {
+    }
+
+    private static Singleton instance = null;
+
+    // 锁为Singleton.class
+    public static synchronized Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+```
+
+
+
+
+
+
+
 # 参考资料
 
 - [尚硅谷Java Thread类基础](https://www.bilibili.com/video/BV1Kb411W75N?p=413)
