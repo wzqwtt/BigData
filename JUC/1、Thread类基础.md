@@ -178,6 +178,169 @@ new Thread(new Runnable() {
 }, "线程3").start();).start();
 ```
 
+
+
+## 3、实现Callable方式
+
+与使用Runnable相比，Callable功能更强大一些：
+
+- 相比run方法，可以有返回值
+
+- 方法可以抛出异常
+
+- 支持泛型的返回值
+
+- 需要借助FutureTask类，比如获取返回结果
+
+Future接口：
+
+- 可以对具体Runnable、Callable任务的执行结果进行取消、查询是否完成、获取结果等
+
+- FutrueTask是Futrue接口的唯一的实现类
+
+- FutureTask同时实现了Runnable，Futrue接口。它既可以作为Runnable被线程执行，又可以作为Future得到Callable的返回值
+
+
+
+```java
+package com.wzq.base;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+// 1、创建一个实现了Callable类的实现类
+class NumThread implements Callable<Integer> {
+
+    // 2、实现call方法，将此线程需要做的操作声明在call方法中
+    @Override
+    public Integer call() throws Exception {
+        int sum = 0;
+        for (int i = 1; i <= 100; i++) {
+            if (i % 2 == 0) {
+                System.out.println(Thread.currentThread().getName() + "线程，i=" + i);
+                sum += i;
+            }
+        }
+        return sum;
+    }
+}
+
+public class ThreadCreate3 {
+
+    public static void main(String[] args) {
+        // 3、创建Callable实现类的对象
+        NumThread numThread = new NumThread();
+        // 4、将此Callable接口实现类的对象传递到FutureTask构造器中，创建FutureTask对象
+        FutureTask<Integer> futureTask = new FutureTask<Integer>(numThread);
+        // 5、将futureTask对象作为参数传递到Threa类中，并启动
+        new Thread(futureTask).start();
+
+        try {
+            // 6、获取最终结果
+            Integer sum = futureTask.get();
+            System.out.println("总和为：" + sum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+
+```
+
+
+
+## 4、线程池
+
+线程池是什么？
+
+- 背景：经常创建和销毁、使用量特别大的资源，比如并发情况下的线程，对性能影响很大。
+
+- 思路：提前创建好多个线程，放入线程池中，使用时直接获取，使用完放回池中。可以避免频繁创建销毁、实现重复利用。类似生活中的公共交通工具。
+
+- 好处：
+  
+  - 提高响应速度（减少了创建新线程的时间）
+  
+  - 降低资源消耗（重复利用线程池中线程，不需要每次都创建）
+  
+  - 便于线程管理
+    
+    - corePoolSize：核心池大小
+    
+    - maximumPoolSize：最大线程数
+    
+    - keepAliveTime：线程没有任务时最多保持多长时间后会终止
+    
+    - ...
+
+
+
+Java的线程池：
+
+![](img/2022-08-05-17-46-29-7058b9ec2ecad599a50a98e810e4cbc.jpg)
+
+
+
+code：
+
+```java
+package com.wzq.base;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+class NumThread1 implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 100; i++) {
+            if (i % 2 == 0) {
+                System.out.println(Thread.currentThread().getName() + ": " + i);
+            }
+        }
+    }
+}
+
+class NumThread2 implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 100; i++) {
+            if (i % 2 != 0) {
+                System.out.println(Thread.currentThread().getName() + ": " + i);
+            }
+        }
+    }
+}
+
+public class ThreadPool {
+    public static void main(String[] args) {
+        // 1、提供指定线程数量的线程池
+        ExecutorService service = Executors.newFixedThreadPool(10);
+
+        // 2、执行指定的线程的操作，需要提供实现Runnable接口或Callable接口实现类的对象
+        // 适合用于Runnable
+        service.execute(new NumThread1());
+        service.execute(new NumThread2());
+
+        // service.submit(Callable callable); // 适用于Callable
+
+        // 3、关闭连接池
+        // 如果线程池不用了，可以关闭
+        service.shutdown();
+    }
+}
+
+
+```
+
+
+
 # 三、Thread类常用方法
 
 本节中的测试代码可以在[JUCCode ThreadMethodTest](./JUCCode/src/main/java/com/wzq/base/ThreadMethodTest.java)文件中找到
@@ -515,11 +678,7 @@ public class ThreadWindowTest3 {
 
 出现死锁以后，不会出现异常，不会报错，只是所有的线程都处于阻塞状态，程序无法继续进行。在使用同步的时候，应该尽全力避免死锁的出现。
 
-
-
 死锁的code在[JUCCode DeadLock.java](./JUCCode/src/main/java/com/wzq/base/DeadLock.java)中，大家可以自己体会，不建议写，万一写熟练了怎么办……
-
-
 
 所以就诞生了Lock锁的方式：
 
@@ -606,8 +765,6 @@ public class ThreadWindowTest4 {
 }
 ```
 
-
-
 ## 4、总结
 
 有以下一个问题需要解答：
@@ -622,13 +779,104 @@ public class ThreadWindowTest4 {
     
     - lock需要手动开锁（启动同步），手动解锁（关闭同步）
 
-
-
 使用同步的顺序：Lock---> 同步代码块（已经进入了方法体，分配了相应资源 ) --->同步方法（在方法体之外)
 
 
 
-# 五、单例模式的线程安全
+# 五、线程的通信
+
+线程通信的例子：使用两个线程交替打印 1-100 中的数字
+
+线程的通信涉及三个方法：
+
+- `wait()`：一旦执行此方法，当前线程就会进入阻塞状态，并且释放锁
+
+- `notify()`：一旦执行此方法，就会唤醒被wait的一个线程；如果多个线程被wait，那么释放优先级最高的那个线程
+
+- `notifyAll()`：一旦执行此方法，就会唤醒所有被wait的线程
+
+
+
+所以就可以写代码了：
+
+```java
+package com.wzq.base;
+
+class Number implements Runnable {
+    private int number = 1;
+
+    @Override
+    public void run() {
+        while (true) {
+            // 锁
+            synchronized (this) {
+                notify();   // 唤醒另一个线程
+                if (number <= 100) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(Thread.currentThread().getName() + ": " + number);
+                    number++;
+
+                    try {
+                        wait(); // 该线程进入阻塞状态，并释放锁
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+public class CommunicationTest {
+
+    public static void main(String[] args) {
+        Number number = new Number();
+
+        Thread t1 = new Thread(number, "线程1");
+        Thread t2 = new Thread(number, "线程2");
+
+        t1.start();
+        t2.start();
+    }
+}
+
+
+```
+
+
+
+关于这三个方法有以下几点需要注意的：
+
+- 这三个方法都必须使用在同步代码块或同步方法中
+
+- 这三个方法的调用者必须是 同步代码块或同步方法的锁（同步监视器），否则会出现IllegalMonitorStateException异常
+
+- 这三个方法被定义在 java.lang.Object中
+
+
+
+问：sleep()和wait()的异同：
+
+- 相同点：都可以使线程进入阻塞状态
+
+- 不同点：
+  
+  - 两个方法声明的位置不同：Thread类中声明sleep()，Object类中声明wait()
+  
+  - 调用的要求不同：sleep可以在任何需要的场景下使用，但wait必须使用在同步代码块或同步方法中
+  
+  - 如果两个方法都被声明在同步代码块或同步方法中，sleep不释放锁，wait释放
+
+
+
+# 六、单例模式的线程安全
 
 只需要声明getInstance方法是`synchronized`的就可以了：
 
@@ -650,9 +898,7 @@ class Singleton {
 }
 ```
 
-
-
-# 六、案例
+# 七、案例
 
 **案例：** 银行有一个账户，有两个储户分别向同一个账户存3000元，每次存1000块，存3次。每次存完打印账户余额
 
