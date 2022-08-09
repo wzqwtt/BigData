@@ -178,8 +178,6 @@ new Thread(new Runnable() {
 }, "线程3").start();).start();
 ```
 
-
-
 ## 3、实现Callable方式
 
 与使用Runnable相比，Callable功能更强大一些：
@@ -199,8 +197,6 @@ Future接口：
 - FutrueTask是Futrue接口的唯一的实现类
 
 - FutureTask同时实现了Runnable，Futrue接口。它既可以作为Runnable被线程执行，又可以作为Future得到Callable的返回值
-
-
 
 ```java
 package com.wzq.base;
@@ -248,11 +244,7 @@ public class ThreadCreate3 {
     }
 
 }
-
-
 ```
-
-
 
 ## 4、线程池
 
@@ -278,13 +270,9 @@ public class ThreadCreate3 {
     
     - ...
 
-
-
 Java的线程池：
 
 ![](img/2022-08-05-17-46-29-7058b9ec2ecad599a50a98e810e4cbc.jpg)
-
-
 
 code：
 
@@ -335,11 +323,7 @@ public class ThreadPool {
         service.shutdown();
     }
 }
-
-
 ```
-
-
 
 # 三、Thread类常用方法
 
@@ -781,8 +765,6 @@ public class ThreadWindowTest4 {
 
 使用同步的顺序：Lock---> 同步代码块（已经进入了方法体，分配了相应资源 ) --->同步方法（在方法体之外)
 
-
-
 # 五、线程的通信
 
 线程通信的例子：使用两个线程交替打印 1-100 中的数字
@@ -794,8 +776,6 @@ public class ThreadWindowTest4 {
 - `notify()`：一旦执行此方法，就会唤醒被wait的一个线程；如果多个线程被wait，那么释放优先级最高的那个线程
 
 - `notifyAll()`：一旦执行此方法，就会唤醒所有被wait的线程
-
-
 
 所以就可以写代码了：
 
@@ -846,11 +826,7 @@ public class CommunicationTest {
         t2.start();
     }
 }
-
-
 ```
-
-
 
 关于这三个方法有以下几点需要注意的：
 
@@ -859,8 +835,6 @@ public class CommunicationTest {
 - 这三个方法的调用者必须是 同步代码块或同步方法的锁（同步监视器），否则会出现IllegalMonitorStateException异常
 
 - 这三个方法被定义在 java.lang.Object中
-
-
 
 问：sleep()和wait()的异同：
 
@@ -873,8 +847,6 @@ public class CommunicationTest {
   - 调用的要求不同：sleep可以在任何需要的场景下使用，但wait必须使用在同步代码块或同步方法中
   
   - 如果两个方法都被声明在同步代码块或同步方法中，sleep不释放锁，wait释放
-
-
 
 # 六、单例模式的线程安全
 
