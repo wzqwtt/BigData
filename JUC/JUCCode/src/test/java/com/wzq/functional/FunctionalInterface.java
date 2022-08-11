@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -99,4 +101,61 @@ public class FunctionalInterface {
             one.andThen(two).accept(s);
         }
     }
+
+    /**
+     * 有时候需要对某种类型的数据进行判断，从而得到一个boolean值的结果，这时候可以用Predicate接口
+     * 抽象方法：test(T t) 对传入的参数进行验证，满足条件返回true，否则返回false
+     * <ul>
+     *     <li>predicateTest1方法：简单测试</li>
+     *     <li>测试默认方法 and 与 </li>
+     *     <li>测试默认方法 or 或 </li>
+     * </ul>
+     */
+    @Test
+    public void predicateTest1() {
+        method1(s -> s.length() > 5, "Hello World");
+    }
+
+    private static void method1(Predicate<String> predicate, String s) {
+        boolean test = predicate.test(s);
+        System.out.println(test);
+    }
+
+    @Test
+    public void predicateTest2() {
+        // and：第一个条件，性别为男；第二个条件，名字中有大字
+        // or：同上
+
+        String[] array = {"大雄，男", "静香，女", "胖虎，男"};
+
+        method2(
+                s -> "男".equals(s.split("，")[1]),
+                s -> s.split("，")[0].contains("大"),
+                array
+        );
+
+    }
+
+    private static void method2(Predicate<String> one, Predicate<String> two, String[] array) {
+        for (String s : array) {
+            boolean andTest = one.and(two).test(s);
+            boolean orTest = one.or(two).test(s);
+            System.out.println(s + " and:" + (andTest ? "满足条件" : "不满足条件")
+                    + " or:" + (orTest ? "满足条件" : "不满足条件"));
+        }
+    }
+
+    /**
+     * java.util.function.Function<T,R> 接口用来根据一个类型的数据得到另一个类型的数据，前者称为前置条件，后者称为后置条件
+     */
+    @Test
+    public void functionTest() {
+        numberToString(s -> String.valueOf(s), 12);
+    }
+
+    private static void numberToString(Function<Number, String> function, int data) {
+        String res = function.apply(data);
+        System.out.println("转换结果：" + res);
+    }
+
 }
