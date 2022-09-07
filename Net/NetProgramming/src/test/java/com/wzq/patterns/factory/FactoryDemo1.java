@@ -1,6 +1,4 @@
-package com.wzq.patterns;
-
-import java.util.concurrent.TimeUnit;
+package com.wzq.patterns.factory;
 
 /**
  * 工厂模式

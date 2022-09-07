@@ -1,4 +1,4 @@
-package com.wzq.patterns;
+package com.wzq.patterns.factory;
 
 /**
  * @author wzq
