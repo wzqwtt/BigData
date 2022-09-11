@@ -29,6 +29,18 @@
             <version>1.16.10</version>
         </dependency>
 
+        <!-- sl4j日志包 -->
+        <!-- slf4j-log4j12-版本号.jar 依赖以下两个包，也会自动添加进来
+             slf4j-api-版本号.jar
+             log4j-版本号.jar
+              例如：slf4j-log4j12-1.7.2.jar，就依赖slf4j-api-1.7.2.jar和log4j-1.2.17.jar这两个包
+        -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>
