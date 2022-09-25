@@ -16,6 +16,7 @@
         <scala.binary.version>2.12</scala.binary.version>
         <slf4j.version>1.7.30</slf4j.version>
         <hadoop.client.version>3.1.3</hadoop.client.version>
+        <mysql.version>8.0.15</mysql.version>
     </properties>
 
     <dependencies>
@@ -67,6 +68,19 @@
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
+            <version>${filnk.version}</version>
+        </dependency>
+
+        <!-- flink-connect-MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-jdbc_${scala.binary.version}</artifactId>
             <version>${filnk.version}</version>
         </dependency>
 
