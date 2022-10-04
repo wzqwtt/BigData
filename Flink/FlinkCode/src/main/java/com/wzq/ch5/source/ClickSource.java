@@ -31,7 +31,7 @@ public class ClickSource implements SourceFunction<Event> {
                     Calendar.getInstance().getTimeInMillis()
             ));
             // 隔一秒生成一个点击事件，方便观测
-            Thread.sleep(1000);
+            Thread.sleep(100);
         }
     }
 
