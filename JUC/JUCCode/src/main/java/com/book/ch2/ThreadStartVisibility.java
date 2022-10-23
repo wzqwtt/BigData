@@ -32,7 +32,7 @@ public class ThreadStartVisibility {
         t1.start();
 
         try {
-            TimeUnit.MILLISECONDS.sleep(50);
+            TimeUnit.MILLISECONDS.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

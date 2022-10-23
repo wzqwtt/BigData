@@ -19,7 +19,9 @@ public class InterruptDemo3 {
                 try {
                     TimeUnit.MILLISECONDS.sleep(200);
                 } catch (InterruptedException e) {
-//                    Thread.currentThread().interrupt();     // 再调用一次Interrupt，线程停止
+                    // 如果没有这句话，那么会抛出异常，并且线程永远不会停止
+                    // 因为sleep抛出异常后，中断标识位被设置为false，所以就陷入死循环了！
+                    Thread.currentThread().interrupt();     // 再调用一次Interrupt，线程停止
                     e.printStackTrace();
                 }
 
