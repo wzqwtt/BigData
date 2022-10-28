@@ -1,0 +1,1108 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=ProgId content=OneNote.File>
+<meta name=Generator content="Microsoft OneNote 15">
+<link id=Main-File rel=Main-File href="Java内存模型—JMM.htm">
+<link rel=File-List href="Java内存模型—JMM.files/filelist.xml">
+</head>
+
+<body lang=zh-CN style='font-family:微软雅黑;font-size:14.0pt'>
+
+<div style='direction:ltr;border-width:100%'>
+
+<div style='direction:ltr;margin-top:0in;margin-left:0in;width:13.0645in'>
+
+<div style='direction:ltr;margin-top:0in;margin-left:.075in;width:2.9902in'>
+
+<p style='margin:0in;font-size:20.0pt'><span style='font-family:"Calibri Light"'
+lang=en-US>Java</span><span style='font-family:"Microsoft YaHei Light"'
+lang=zh-CN>内存模型—</span><span style='font-family:"Calibri Light"' lang=en-US>JMM</span></p>
+
+</div>
+
+<div style='direction:ltr;margin-top:.0388in;margin-left:.075in;width:1.7736in'>
+
+<p style='margin:0in;font-size:10.0pt;color:#767676'><span style='font-family:
+Calibri'>2022</span><span style='font-family:"Microsoft YaHei"'>年</span><span
+style='font-family:Calibri'>10</span><span style='font-family:"Microsoft YaHei"'>月</span><span
+style='font-family:Calibri'>23</span><span style='font-family:"Microsoft YaHei"'>日</span></p>
+
+<p style='margin:0in;font-family:Calibri;font-size:10.0pt;color:#767676'>20:53</p>
+
+</div>
+
+<div style='direction:ltr;margin-top:.1486in;margin-left:0in;width:13.0645in'>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>首先：</span><span lang=en-US>JVM</span><span lang=zh-CN>和</span><span
+lang=en-US>JMM</span><span lang=zh-CN>是两个截然不同的东西</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>大厂面试题：</p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'
+     lang=zh-CN>你知道什么是</span><span style='font-family:Calibri;font-size:14.0pt;
+     font-weight:normal;font-style:normal;font-family:Calibri;font-size:14.0pt'
+     lang=en-US>J</span><span style='font-family:"Microsoft YaHei";font-size:
+     14.0pt;font-weight:normal;font-style:normal;font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=en-US>ava</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt;font-weight:normal;font-style:normal;font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=zh-CN>内存模型</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt;font-weight:normal;font-style:normal;font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=en-US>JMM</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt;font-weight:normal;font-style:normal;font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=zh-CN>吗？</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JMM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>与</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>volatile</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>它们两个之间的关系？</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JMM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>有哪些特性</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US> or </span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>它的三大特性是什么？</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>为什么要有</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JMM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>，它为什么出现？作用和功能是什么？</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>先行发生原则有了解过吗？</span></li>
+</ol>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US>1</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、计算机硬件存储体系</span></h1>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>计算机存储结构，从本地磁盘到主存到</span><span style='font-family:Calibri'
+lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>缓存，也就是从硬盘到内存，到</span><span
+style='font-family:Calibri' lang=en-US>CPU</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>一般对应的程序的操作就是从数据库查数据到内存然后到</span><span style='font-family:Calibri'
+lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>进行计算</span></p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image001.png" width=779
+height=388></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>和物理主内存的速度是不一致的，所以会有这么多级缓存</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>的运行并</span><span
+style='font-family:"Microsoft YaHei";color:#FA0000' lang=zh-CN>不是直接操作内存而是先把内存里边的数据读到缓存</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，而内存的读和写操作的时候就会造成数据不一致的问题</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image002.png" width=685
+height=290></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>JVM</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>规范中试图定义一种</span><span
+style='font-family:Calibri' lang=en-US>J</span><span style='font-family:"Microsoft YaHei"'
+lang=en-US>ava</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>内存模型（</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>Java Memory Model</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，简称</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>JMM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>）来</span><span
+style='font-family:"Microsoft YaHei";color:#FA0000' lang=zh-CN>屏蔽掉各种硬件和操作系统的内存访问差异</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>以实现让</span><span style='font-family:Calibri' lang=en-US>J</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>程序在各种平台下都能达到一致的</span><span
+style='font-family:"Microsoft YaHei";color:#FA0000' lang=zh-CN>内存访问效果</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US>2</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、</span><span style='font-family:Calibri' lang=en-US>Java</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>内存模型</span><span
+style='font-family:Calibri' lang=en-US>Java Memory Model</span></h1>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=en-US>JMM</span><span lang=zh-CN>（</span><span lang=en-US>Java</span><span
+lang=zh-CN>内存模型</span><span lang=en-US>Java Memory Model</span><span
+lang=zh-CN>，简称</span><span lang=en-US>JMM</span><span lang=zh-CN>）本身是一种</span><span
+style='color:#ED7D31' lang=zh-CN>抽象的</span><span lang=zh-CN>概念</span><span
+style='font-weight:bold;color:#FA0000' lang=zh-CN>并不真实存在</span><span
+lang=zh-CN>，</span><span style='font-weight:bold;color:#5B9BD5' lang=zh-CN>它仅仅描述的是一组约定或规范</span><span
+lang=zh-CN>，通过这组规范</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>定义了程序中（尤其是多线程）各个变量的读写访问方式并决定一个线程对共享变量的写入，何时以及如何变成对另一个线程可见。</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>关键技术点都是围绕多线程的<span
+style='font-weight:bold;color:#FA0000'>原子性、可见性和有序性</span>展开的。</p>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt' lang=en-US>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>原则：</span><span style='font-family:Calibri' lang=en-US>JMM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>的关键技术点都是围绕原子性、可见性和有序性展开的</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:Calibri' lang=en-US>JMM</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>能干嘛？</span></p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'
+     lang=zh-CN>通过</span><span style='font-family:Calibri;font-size:14.0pt;
+     font-weight:normal;font-style:normal;font-family:Calibri;font-size:14.0pt'
+     lang=en-US>JMM</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt;font-weight:normal;font-style:normal;font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=zh-CN>来实现</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt;font-weight:bold;font-style:normal;font-weight:bold;
+     font-family:"Microsoft YaHei";font-size:14.0pt;color:#FA0000' lang=zh-CN>线程和主内存之间的抽象关系</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'
+     lang=zh-CN>。</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-weight:bold;font-family:"Microsoft YaHei";font-size:14.0pt;
+     color:#FA0000' lang=zh-CN>屏蔽各个</span><span style='font-weight:bold;
+     font-family:"Microsoft YaHei";font-size:14.0pt;color:#5B9BD5' lang=zh-CN>硬件平台</span><span
+     style='font-weight:bold;font-family:"Microsoft YaHei";font-size:14.0pt;
+     color:#FA0000' lang=zh-CN>和</span><span style='font-weight:bold;
+     font-family:"Microsoft YaHei";font-size:14.0pt;color:#5B9BD5' lang=zh-CN>操作系统</span><span
+     style='font-weight:bold;font-family:"Microsoft YaHei";font-size:14.0pt;
+     color:#FA0000' lang=zh-CN>的内存访问差异</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=zh-CN>以实现让</span><span style='font-family:Calibri;
+     font-size:14.0pt' lang=en-US>J</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=en-US>ava</span><span style='font-family:"Microsoft YaHei";
+     font-size:14.0pt' lang=zh-CN>程序在各种平台下都能达到一致的内存访问效果。</span></li>
+</ol>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US>3</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、</span><span style='font-family:Calibri' lang=en-US>JMM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>规范下，三大特性</span></h1>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>1</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）可见性</span></h2>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei";
+color:#FA0000' lang=zh-CN>是指当一个线程修改了某一个共享变量的值，其他线程是否能够立即知道该变更</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，</span><span
+style='font-family:Calibri' lang=en-US>JMM</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>规定了所有的变量都存储在</span><span style='font-family:"Microsoft YaHei";
+color:#FA0000' lang=zh-CN>主内存</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>中。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image003.png" width=934
+height=400></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>系统主内存<span
+style='font-weight:bold;color:#E84C22'>共享变量</span>数据修改被写入的时机是不确定的，<span
+style='font-weight:bold;color:#5B9BD5'>多线程并发下很可能出现“脏读”</span>，所以每个线程都有自己的<span
+style='font-weight:bold;font-style:italic;color:#E84C22'>工作内存</span>，</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>线程自己的工作内存中保存了该线程使用到的变量的<span
+style='font-weight:bold;color:#E84C22'>主内存副本拷贝</span>，线程对变量的所有操作（读取，赋值等）都必须在线程自己的工作内存中进行，</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>而不能够直接读写主内存中的变量。不同线程之间也无法直接访问对方工作内存中的变量，线程间变量值的传递均需要通过主内存来完成。</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image004.png" width=588
+height=249></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>线程脏读举例：</p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:
+     normal;font-family:微软雅黑;font-size:14.0pt' lang=zh-CN>主内存有变量</span><span
+     style='font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:
+     normal;font-family:微软雅黑;font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:
+     normal;font-family:微软雅黑;font-size:14.0pt' lang=zh-CN>，初始值位</span><span
+     style='font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:
+     normal;font-family:微软雅黑;font-size:14.0pt' lang=en-US>0</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:微软雅黑;font-size:14.0pt' lang=zh-CN>线程</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>A</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>要将</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>加</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>1</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>，先将</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x=0</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>拷贝到自己的私有内存中，然后更新</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>的值</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>线程</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>A</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>将更新后的</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>值刷到主内存的时间是不固定的</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>刚好在线程</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>A</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>没有回刷</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>到主内存时，线程</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>B</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>同样从主内存中读取</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>，此时为</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>0</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>，和线程</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>A</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>一样的操作，最后期盼的</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x=2</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>就会变成</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>x=1</span></li>
+</ol>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>2</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）原子性</span></h2>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>指一个操作是不可打断的，及多线程环境下，操作不能被其他线程干扰。</p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>3</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）有序性</span></h2>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>对于一个线程的执行代码而言，我们总是习惯性的认为代码的执行总是从上到下，有序执行。但为了提升性能，编译器和处理器通常会对指令序列进行<span
+style='font-weight:bold;color:#E84C22'>重新排序</span>。</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>J</span><span style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>规范指定</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>JVM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>线程内部维持</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei";color:#E84C22'
+lang=zh-CN>顺序化语义</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>，即</span><span
+style='font-style:italic;font-family:"Microsoft YaHei"' lang=zh-CN>只要程序的最终结果与它顺序化执行的结果相等，那么指令的执行顺序可以与代码顺序不一致</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，此过程叫</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei";color:#E84C22'
+lang=zh-CN>指令的重排序</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'><span style='font-weight:
+bold'>优缺点：</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>JVM</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>能根据处理器特性（</span><span
+style='font-family:Calibri' lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>多级缓存系统、多核处理器等）适当的对机器指令进行重排序，使机器指令更符合</span><span style='font-family:
+Calibri' lang=en-US>CPU</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>的执行特性，最大限度地发挥机器性能。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>但是，</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>指令重排<span
+style='color:#E84C22'>可以保证串行语义一致</span>，但<span style='color:#E84C22'>无法保证多线程间的语义也一致</span>（即可能产生“脏读”）</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>两行以上不相干的代码在执行的时候有可能先执行的不是第一条，<span
+style='color:#00B0F0'>不见得是从上到下顺序执行，执行顺序会被优化。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>从源码到最终执行示例图：</p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image005.png" width=858
+height=44></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:3.2118in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public </span><span style='color:#47B7A0'>void</span><span
+  style='color:#979797'> mySort {</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#47B7A0'>int </span><span style='font-family:Consolas;color:#72A1BA'>x</span><span
+  style='font-family:Consolas;color:#979797'> = </span><span style='font-family:
+  Consolas;color:#899C7F'>11</span><span style='font-family:Consolas;
+  color:#979797'>; &nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#6A9955'>// </span><span style='font-family:"Microsoft YaHei";
+  color:#6A9955'>语句</span><span style='font-family:Consolas;color:#6A9955'> 1</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#47B7A0'>int </span><span style='font-family:Consolas;color:#72A1BA'>y</span><span
+  style='font-family:Consolas;color:#979797'> = </span><span style='font-family:
+  Consolas;color:#899C7F'>12</span><span style='font-family:Consolas;
+  color:#979797'>; &nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#6A9955'>// </span><span style='font-family:"Microsoft YaHei";
+  color:#6A9955'>语句</span><span style='font-family:Consolas;color:#6A9955'> 2</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; x = x + </span><span style='font-family:Consolas;
+  color:#899C7F'>5</span><span style='font-family:Consolas;color:#979797'>;
+  &nbsp; &nbsp; &nbsp;</span><span style='font-family:Consolas;color:#6A9955'>//
+  </span><span style='font-family:"Microsoft YaHei";color:#6A9955'>语句</span><span
+  style='font-family:Consolas;color:#6A9955'> 3</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; y = x * x; &nbsp; &nbsp; &nbsp;</span><span
+  style='font-family:Consolas;color:#6A9955'>// </span><span style='font-family:
+  "Microsoft YaHei";color:#6A9955'>语句</span><span style='font-family:Consolas;
+  color:#6A9955'> 4</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>以上四条语句可以重排序为：</span><span style='font-family:Calibri' lang=en-US>1234</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>、</span><span
+style='font-family:Calibri' lang=en-US>2134</span><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>、</span><span style='font-family:Calibri'
+lang=en-US>1324</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>问题：请问语句</span><span style='font-family:Calibri' lang=en-US>4</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>可以重排后变成第一个执行吗？</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>答：不可以！要符合数据依赖性！</p>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>单线程环境里面确定程序最终执行结果和代码顺序执行的结果一致。</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>处理器在进行重排序时<span
+style='color:#E84C22'>必须要考虑</span>指令之间的<span style='font-weight:bold;
+font-style:italic;text-decoration:underline;color:#E84C22'>数据依赖性</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>多线程环境中线程交替执行，由于编译器优化重排的存在，两个线程中使用的变量能否保证一致性是无法确定的，结果无法预测。</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'
+lang=en-US>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US><span style='mso-spacerun:yes'> </span>4</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>、</span><span
+style='font-family:Calibri' lang=en-US>JMM</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>规范下，多线程读变量的读写过程</span></h1>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>由于</span><span style='font-family:Calibri' lang=en-US>JVM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>运行程序的实体是线程，而每个线程创建时</span><span
+style='font-family:Calibri' lang=en-US>JVM</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>都会为其创建一个工作内存（有些地方称为栈空间），工作内存是每个线程的私有数据区域。</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>而</span><span style='font-family:Calibri' lang=en-US>J</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>内存模型中规定所有变量都存储在</span><span
+style='font-family:"Microsoft YaHei";color:#E84C22' lang=zh-CN>主内存</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，主内存时共享内存区域，所有线程都可以访问，</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei";color:#E84C22'
+lang=zh-CN>但线程对变量的操作（读取赋值等）必须在工作内存中进行，</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt;color:#E84C22'><span
+style='font-weight:bold'>首先要将变量从主内存拷贝到线程自己的工作内存空间，然后对变量进行操作，操作完成之后再将变量写回主内存，不能直接操作主内存中的变量。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>各个线程中的工作内存中存储着主内存中的<span
+style='font-weight:bold;color:#5B9BD5'>变量副本拷贝</span>，因此不同的线程间无法访问对方的工作内存，线程间的通信（传值）必须通过主内存来完成</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>其简要访问过程如下图所示：</p>
+
+<p style='margin:0in'><img src="Java内存模型—JMM.files/image006.png" width=743
+height=455></p>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt;color:#5B9BD5'><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>JMM</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>定义了线程和主内存之间的抽象关系</span></p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'>线程之间的共享变量存储在主内存中（从硬件角度来说就是内存条）</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>每个线程都有一个私有的本地工作内存，本地工作内存中存储了该线程用来读</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>/</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>写共享变量的副本（从硬件角度来说就是</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>CPU</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>的缓存，比如寄存器、</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>L1/2/3</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>缓存等）</span></li>
+</ol>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt;color:#FA0000'><span
+style='font-weight:bold'>小总结：</span></p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'>定义的所有共享变量都存储在物理主内存中</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt'>每个线程都有自己独立的工作内存，里面保存该线程使用到的变量的副本（主内存中该变量的一份拷贝）</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt'>线程对共享变量所有的操作都必须先在线程自己的工作内存中进行后写回主内存，不能直接从主内存中读写（不能越级）</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt'>不同线程之间也无法直接访问其他线程的工作内存中的变量，线程间变量值的传递需要通过主内存来进行（同级不能相互访问）</span></li>
+</ol>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US>5</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、</span><span style='font-family:Calibri' lang=en-US>JMM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>规范下，多线程先行发生原则之</span><span
+style='font-family:Calibri' lang=en-US>happends-before</span></h1>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>在</span><span style='font-family:Calibri' lang=en-US>JMM</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>中，如果一个操作执行的结果需要对另一个操作具有可见性，或者代码重排序。</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>那么这两个操作之间必须存在</span><span style='font-family:Calibri' lang=en-US>happens-before(</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>先行发生</span><span
+style='font-family:Calibri' lang=en-US>)</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>原则。</span></p>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>1</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）</span><span
+style='font-family:Calibri' lang=en-US>x</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、</span><span style='font-family:Calibri' lang=en-US>y</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>案例说明</span></h2>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.7111in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'
+  lang=en-US>x = 5</p>
+  </td>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:1.0388in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+  lang=zh-CN>线程</span><span style='font-family:Calibri' lang=en-US>A</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>执行</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.7in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'
+  lang=en-US>y = x</p>
+  </td>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:1.05in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+  lang=zh-CN>线程</span><span style='font-family:Calibri' lang=en-US>B</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>执行</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>上述操作称之为：写后读。问题：</span><span lang=en-US>y</span><span lang=zh-CN>是否等于</span><span
+lang=en-US>5</span><span lang=zh-CN>呢？</span></p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:10.7527in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+  lang=zh-CN>如果线程</span><span style='font-family:Calibri' lang=en-US>A</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>的操作（</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>x=5</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>）</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>happens-before</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>（先行发生）线程</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>的操作（</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>y=x</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>），那么可以确定线程</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>执行后</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>y=5</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>一定成立；<br>
+    <br>
+    如果他们不存在</span><span style='font-family:"Microsoft YaHei"' lang=en-US>happens-before</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>原则，那么</span><span
+  style='font-family:"Microsoft YaHei"' lang=en-US>y=5</span><span
+  style='font-family:"Microsoft YaHei"' lang=zh-CN>不一定成立。</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=en-US>happens-before</span><span style='font-weight:bold;color:#FA0000'
+lang=zh-CN>包含可见性和有序性的约束</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>2</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）先行发生原则说明</span></h2>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>如果</span><span style='font-family:Calibri' lang=en-US>J</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>内存模型中所有有序性都仅靠</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>volatile</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>和</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>synchronized</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>来完成，那么有很多操作都将会变得非常啰嗦，</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>但是我们在编写</span><span style='font-family:Calibri' lang=en-US>J</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>并发代码的时候并没有察觉到这一点。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+style='color:#FA0000' lang=zh-CN>我们没有</span><span style='color:#5B9BD5'
+lang=zh-CN>时时、处处、次次</span><span style='color:#FA0000' lang=zh-CN>，添加</span><span
+style='color:#FA0000' lang=en-US>volatile</span><span style='color:#FA0000'
+lang=zh-CN>和</span><span style='color:#FA0000' lang=en-US>synchronized</span><span
+style='color:#FA0000' lang=zh-CN>来完成程序，这是因为</span><span style='color:#FA0000'
+lang=en-US>Java</span><span style='color:#FA0000' lang=zh-CN>语言中</span><span
+style='color:#FA0000' lang=en-US>JMM</span><span style='color:#FA0000'
+lang=zh-CN>原则下有一个</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt;color:#FA0000'><span
+lang=zh-CN>“先行发生”（</span><span lang=en-US>happens-before</span><span
+lang=zh-CN>）的原则限制和规矩，给你立好了规矩！</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt;color:#FA0000'>这个原则非常重要：</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>它是判断数据是否存在竞争，线程是否安全的非常有用的手段。依赖这个原则，可以通过几条简单规则一揽子解决</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei";
+color:#5B9BD5' lang=zh-CN>并发环境下两个操作之间是否存在冲突的所有问题</span><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>，而不需要陷入</span><span style='font-family:Calibri'
+lang=en-US>J</span><span style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>内存模型苦涩难懂的底层编译原理之中。</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>3</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）</span><span
+style='font-family:Calibri' lang=en-US>happens-before</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>总原则</span></h2>
+
+<ul type=disc style='direction:ltr;unicode-bidi:embed;margin-top:0in;
+ margin-bottom:0in'>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>如果一个操作</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>另一个操作，那么第一个操作的执行结果将对第二个操作可见，而且第一个操作的执行顺序排在第二个操作之前</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>两个操作之间存在</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>关系，并不意味着一定要按照</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happends-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>原则制定的顺序来执行。如果重排序之后的执行结果与按照</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>关系来执行的</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;color:#FA0000'
+     lang=zh-CN>结果一致，那么这种重排序并不非法。</span></li>
+</ul>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>4</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）</span><span
+style='font-family:Calibri' lang=en-US>happen-before</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>之</span><span
+style='font-family:Calibri' lang=en-US>8</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>条</span></h2>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+style='font-weight:bold'>次序规则：</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>一个线程内，按照代码顺序，写在前面的操作先行发生于写在后面的操作；前一个操作的结果可以被后续的操作获取。</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>直白一点就是：前面一个操作把变量</span><span lang=en-US>x</span><span lang=zh-CN>赋值为</span><span
+lang=en-US>1</span><span lang=zh-CN>，那后面一个操作肯定能知道</span><span lang=en-US>x</span><span
+lang=zh-CN>已经变成了</span><span lang=en-US>1</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'
+lang=en-US>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+style='font-weight:bold'>锁定原则：</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>一个</span><span lang=en-US>unLock</span><span lang=zh-CN>操作先行发生于后面（这里的后面，是指时间上的先后）对同一个锁的</span><span
+lang=en-US>lock</span><span lang=zh-CN>操作。</span></p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:7.2694in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>static </span><span style='color:#47B7A0'>Object </span><span
+  style='color:#72A1BA'>objectLock</span><span style='color:#979797'> = </span><span
+  style='color:#C586C0'>new </span><span style='color:#989875'>Object</span><span
+  style='color:#979797'>();</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:14.0pt'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public static </span><span style='color:#47B7A0'>void </span><span
+  style='color:#989875'>main</span><span style='color:#979797'>(</span><span
+  style='color:#47B7A0'>String</span><span style='color:#979797'>[] args)
+  throws InterruptedException {</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#6A9955'>// </span><span style='font-family:"Microsoft YaHei";
+  color:#6A9955'>对于同一把锁</span><span style='font-family:Consolas;color:#6A9955'>objectLock</span><span
+  style='font-family:"Microsoft YaHei";color:#6A9955'>，</span><span
+  style='font-family:Consolas;color:#6A9955'>threadA</span><span
+  style='font-family:"Microsoft YaHei";color:#6A9955'>一定要先</span><span
+  style='font-family:Consolas;color:#6A9955'>unlock</span><span
+  style='font-family:"Microsoft YaHei";color:#6A9955'>同一把锁后</span></p>
+  <p style='margin:0in;font-size:13.5pt'><span style='font-family:Consolas;
+  color:#979797'>&nbsp; &nbsp; </span><span style='font-family:Consolas;
+  color:#6A9955'>// threadB</span><span style='font-family:"Microsoft YaHei";
+  color:#6A9955'>才能获取该锁，即：</span><span style='font-family:Consolas;color:#6A9955'>A</span><span
+  style='font-family:"Microsoft YaHei";color:#6A9955'>先行发生于</span><span
+  style='font-family:Consolas;color:#6A9955'>B</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#569CD6'>synchronized</span><span
+  style='color:#979797'>(objectLock) {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:14.0pt'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>&nbsp;
+  &nbsp; }</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'><span style='font-weight:
+bold' lang=en-US>volatile</span><span style='font-weight:bold' lang=zh-CN>变量规则：</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'><span lang=zh-CN>对一个</span><span
+lang=en-US>volatile</span><span lang=zh-CN>变量的写操作先行发生于后面对这个变量的读操作；</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>前面的写对后面的读是可见的，这里的“后面”同样指时间上的先后</p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+style='font-weight:bold'>传递规则：</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>如果操作</span><span style='font-family:Calibri' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>先行发生于操作</span><span
+style='font-family:Calibri' lang=en-US>B</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>，而操作</span><span style='font-family:Calibri' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>又先行发生于操作</span><span
+style='font-family:Calibri' lang=en-US>C</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>，则可以得出操作</span><span style='font-family:Calibri' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>先行发生于操作</span><span
+style='font-family:Calibri' lang=en-US>C</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>线程启动规则（</span><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>T</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=en-US>hread Start Rule</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei"' lang=zh-CN>）：</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>T</span><span style='font-family:"Microsoft YaHei"' lang=en-US>hread</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>对象的</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>start</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>方法先行发生于此线程的每一个动作</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>线程中断规则（</span><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>T</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=en-US>hread Interruption Rule</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei"' lang=zh-CN>）：</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>对线程</span><span style='font-family:Calibri' lang=en-US>interrupt()</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>方法的调用先行发生于被中断线程的代码检测到中断事件的发生；</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>可以通过</span><span style='font-family:Calibri' lang=en-US>Thread.interrupted()</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>检测到是否发生中断</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>也就是说：你要先调用</span><span style='font-family:Calibri' lang=en-US>interrupt()</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>方法设置过中断标志位，才能检测到中断发送</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+style='font-weight:bold' lang=zh-CN>线程终止规则（</span><span style='font-weight:
+bold' lang=en-US>Thread Termination Rule</span><span style='font-weight:bold'
+lang=zh-CN>）：</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>线程中的所有操作都先行发生于对此线程的终止检测</p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>可以通过</span><span lang=en-US>isAlive</span><span lang=zh-CN>等手段检测线程是否已经终止执行</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>对象终结规则（</span><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>F</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=en-US>inalizer Rule</span><span
+style='font-weight:bold;font-family:"Microsoft YaHei"' lang=zh-CN>）：</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>一个对象的初始化完成（构造函数执行结束）先行发生于它的</span><span style='font-family:Calibri'
+lang=en-US>finalize()</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>方法的开始</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=zh-CN>就是：对象没有完成初始化之前，是不能调用</span><span lang=en-US>finalized()</span><span
+lang=zh-CN>方法的</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h2 style='margin:0in;font-size:14.0pt;color:#2E75B5'><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>（</span><span style='font-family:Calibri'
+lang=en-US>5</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>）小总结</span></h2>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>在</span><span style='font-family:Calibri' lang=en-US>J</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>ava</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>语言里面，</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>happens-before</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>的语义本质上是一种</span><span
+style='font-family:"Microsoft YaHei";color:#FA0000' lang=zh-CN>可见性</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>A happens-before B</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>意味着</span><span style='font-family:Calibri' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>发生过的事情对</span><span
+style='font-family:Calibri' lang=en-US>B</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>来说是可见的，无论</span><span style='font-family:Calibri' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>事件和</span><span
+style='font-family:Calibri' lang=en-US>B</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>事件是否发生在同一个线程里</span></p>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:Calibri'
+lang=en-US>JMM</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>的设计分为两部分：</span></p>
+
+<ul type=disc style='direction:ltr;unicode-bidi:embed;margin-top:0in;
+ margin-bottom:0in'>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>一部分是面向程序员提供的，也就是</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>规则，它通俗易懂的向我们程序员阐述了一个强内存模型，我们只要理解</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>规则，就可以编写并发安全的程序了</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>另一部分是针对</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JVM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>实现的，为了尽可能少的对编译器和处理器做约束从而提高性能，</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JMM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>在不影响程序执行结果的前提下对其不做要求，即允许优化重排序。我们只需要关注前者就好了，也就是理解</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>happens-before</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>规则即可，其他繁琐的内容有</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>JMM</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>规范结合操作系统给我们搞定，我们只要写好代码即可。</span></li>
+</ul>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<h1 style='margin:0in;font-size:16.0pt;color:#1E4E79'><span style='font-family:
+Calibri' lang=en-US>6</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>、案例说明</span></h1>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'><span
+lang=en-US>code</span><span lang=zh-CN>：</span></p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:2.6305in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>private </span><span style='color:#47B7A0'>int </span><span
+  style='color:#72A1BA'>value</span><span style='color:#979797'> = </span><span
+  style='color:#899C7F'>0</span><span style='color:#979797'>;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public </span><span style='color:#47B7A0'>int </span><span
+  style='color:#989875'>getValue</span><span style='color:#979797'>() {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public </span><span style='color:#47B7A0'>int </span><span
+  style='color:#989875'>setValue</span><span style='color:#979797'>() {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> ++value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>假设存在线程</span><span style='font-family:Calibri' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>和</span><span
+style='font-family:Calibri' lang=en-US>B</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>，线程</span><span style='font-family:"Microsoft YaHei"' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>（时间上的先后）调用了</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>setValue()</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，然后线程</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>调用了同一个对象的</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>getValue()</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，那么线程</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>收到的返回值是什么？</span></p>
+
+<p style='margin:0in;font-family:微软雅黑;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:微软雅黑'
+lang=zh-CN>使用这段简单的代码依次分析</span><span style='font-family:Calibri' lang=en-US>happens-before</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>的规则（忽略后四条）：</span></p>
+
+<ol type=1 style='direction:ltr;unicode-bidi:embed;margin-top:0in;margin-bottom:
+ 0in;font-family:微软雅黑;font-size:14.0pt;font-weight:normal;font-style:normal'>
+ <li value=1 style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt;font-weight:normal;
+     font-style:normal;font-family:"Microsoft YaHei";font-size:14.0pt'>由于两个方法是由不同的线程调用，不在同一个线程，所以肯定不满足程序次序规则；</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt'>两个方法都没有使用锁，所以不满足锁定规则；</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>变量不是用</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>volatile</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>修饰的，所以</span><span
+     style='font-family:Calibri;font-size:14.0pt' lang=en-US>volatile</span><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt' lang=zh-CN>变量规则不满足；</span></li>
+ <li style='margin-top:0;margin-bottom:0;vertical-align:middle'><span
+     style='font-family:"Microsoft YaHei";font-size:14.0pt'>传递规则肯定不满足；</span></li>
+</ol>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>所以我们无法通过</span><span style='font-family:Calibri' lang=en-US>happens-before</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>原则推导出线程</span><span
+style='font-family:Calibri' lang=en-US>A </span><span style='font-family:"Microsoft YaHei"'
+lang=en-US>happens-before</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>线程</span><span style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>，虽然可以确认在时间上线程</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>A</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>优先于线程</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>指定，</span></p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>但就是无法确认线程</span><span style='font-family:Calibri' lang=en-US>B</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>获得的结果是什么，所以这段代码不是线程安全的。</span></p>
+
+<p style='margin:0in;font-family:Calibri;font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>修复</span><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>01</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>：</span><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>把</span><span style='font-family:"Microsoft YaHei"'
+lang=en-US>getter/setter</span><span style='font-family:"Microsoft YaHei"'
+lang=zh-CN>方法都定义为</span><span style='font-family:"Microsoft YaHei"' lang=en-US>synchronized</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>方法</span></p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:3.9708in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>private </span><span style='color:#47B7A0'>int </span><span
+  style='color:#72A1BA'>value</span><span style='color:#979797'> = </span><span
+  style='color:#899C7F'>0</span><span style='color:#979797'>;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public synchronized </span><span style='color:#47B7A0'>int
+  </span><span style='color:#989875'>getValue</span><span style='color:#979797'>()
+  {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public synchronized </span><span style='color:#47B7A0'>int
+  </span><span style='color:#989875'>setValue</span><span style='color:#979797'>()
+  {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> ++value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style='margin:0in;font-family:"Microsoft YaHei";font-size:14.0pt'>&nbsp;</p>
+
+<p style='margin:0in;font-size:14.0pt'><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>修复</span><span style='font-weight:
+bold;font-family:Calibri' lang=en-US>02</span><span style='font-weight:bold;
+font-family:"Microsoft YaHei"' lang=zh-CN>：</span><span style='font-family:
+"Microsoft YaHei"' lang=zh-CN>把</span><span style='font-family:"Microsoft YaHei"'
+lang=en-US>value</span><span style='font-family:"Microsoft YaHei"' lang=zh-CN>定义为</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>volatile</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>变量，由于</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>setter</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>方法对</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>value</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>的修改不依赖</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>value</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>的原值，满足</span><span
+style='font-family:"Microsoft YaHei"' lang=en-US>volatile</span><span
+style='font-family:"Microsoft YaHei"' lang=zh-CN>关键字的使用场景</span></p>
+
+<div style='direction:ltr'>
+
+<table border=1 cellpadding=0 cellspacing=0 valign=top style='direction:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-width:
+ 1pt' title="" summary="">
+ <tr>
+  <td style='border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:3.9708in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>private volatile </span><span style='color:#47B7A0'>int
+  </span><span style='color:#72A1BA'>value</span><span style='color:#979797'> =
+  </span><span style='color:#899C7F'>0</span><span style='color:#979797'>;</span></p>
+  <p style='margin:0in;font-family:"Microsoft YaHei";font-size:13.5pt;
+  color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public </span><span style='color:#47B7A0'>int </span><span
+  style='color:#989875'>getValue</span><span style='color:#979797'>() {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#569CD6'>&nbsp;</p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#569CD6'>public synchronized </span><span style='color:#47B7A0'>int
+  </span><span style='color:#989875'>setValue</span><span style='color:#979797'>()
+  {</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt'><span
+  style='color:#979797'>&nbsp; &nbsp; </span><span style='color:#C586C0'>return</span><span
+  style='color:#979797'> ++value;</span></p>
+  <p style='margin:0in;font-family:Consolas;font-size:13.5pt;color:#979797'>}</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+<p style='margin:0in'>&nbsp;</p>
+
+<p style='text-align:left;margin:0in;font-family:Arial;font-size:9pt;
+color:#969696;direction:ltr'>已使用 OneNote 创建。</p>
+
+</div>
+
+</body>
+
+</html>
