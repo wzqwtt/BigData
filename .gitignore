@@ -18,6 +18,5 @@
 /Flink/FlinkCode/target/
 /input/
 /JUC/JUCCode/words.txt
-/Net/NetProgramming/file/
-/Net/NetProgramming/target/
-/Net/NetProgramming/NetProgramming.iml
+/Netty/NettyLearn/target/
+/Netty/NettyLearn/NettyLearn.iml
