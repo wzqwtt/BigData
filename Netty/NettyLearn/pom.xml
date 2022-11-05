@@ -29,11 +29,11 @@
             <version>1.16.10</version>
         </dependency>
 
-        <!-- Netty -->
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.52.Final</version>
+            <version>4.1.84.Final</version>
         </dependency>
 
     </dependencies>

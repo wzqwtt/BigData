@@ -2,9 +2,13 @@ package com.wzq.ch2.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author wzq
@@ -14,7 +18,39 @@ public class EchoServer {
 
     public static int DEFAULT_PORT = 7;
 
-    public static void main(String[] args) {
+    public void start(int port) throws InterruptedException {
+        final EchoServerHandler serverHandler = new EchoServerHandler();
+        // 创建EventLoopGroup
+        NioEventLoopGroup group = new NioEventLoopGroup();
+        try {
+            // 创建ServerBootStrap
+            ServerBootstrap b = new ServerBootstrap();
+
+            b.group(group)
+                    // 指定所使用的NIO传输Channel
+                    .channel(NioServerSocketChannel.class)
+                    // 使用指定的端口设置socket地址
+                    .localAddress(new InetSocketAddress(port))
+                    // 添加一个EchoServerHandler到子Channel的ChannelPipeline
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            // 因为EchoServerHandler被标注为@Shareable，所以我们可以总是使用同样的实例
+                            ch.pipeline().addLast(serverHandler);
+                        }
+                    });
+
+            // 异步的绑定服务器；调用sync方法阻塞等待，直到绑定完成
+            ChannelFuture f = b.bind().sync();
+            // 获取Channel的closeFuture，并且阻塞当前线程直到它完成
+            f.channel().closeFuture().sync();
+        } finally {
+            // 关闭EventLoopGroup，释放所有资源
+            group.shutdownGracefully();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         int port;
 
         try {
@@ -23,33 +59,7 @@ public class EchoServer {
             port = DEFAULT_PORT;
         }
 
-        // 多线程事件循环气
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();      // boss
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();    // worker
-
-        try {
-            // 启动NIO服务的引导程序类
-            ServerBootstrap b = new ServerBootstrap();
-
-            b.group(bossGroup, workerGroup)  // 设置EventLoopGroup
-                    .channel(NioServerSocketChannel.class)  // 指明新的channel类型
-                    .childHandler(new EchoServerHandler())  // 指定ChannelHandler
-                    .option(ChannelOption.SO_BACKLOG, 128)  // 设置ServerChannel的一些选项
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); //设置ServerChannel的子Channel选项
-
-            // 绑定端口，开始接收进来的连接
-            ChannelFuture f = b.bind(port).sync();
-
-            System.out.println("Echo Server 已启动，端口：" + port);
-
-            // 等待服务器socket关闭
-            f.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
+        new EchoServer().start(port);
     }
 
 }
