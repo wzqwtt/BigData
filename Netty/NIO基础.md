@@ -839,6 +839,331 @@ public class StickyAndHalfPack {
 
 # 三、文件编程
 
+## 1、FileChannel
+
+> :warning:FileChannel只能工作在阻塞模式下
+
+### 获取
+
+不能直接打开FileChannel，必须通过FileInputStream、FileOutputStream或者RandomAccessFile来获取FileChannel，它们都有`getChannel`方法
+
+- 通过FileInputStream获取的Channel只能读
+- 通过FileOutputStream获取的Channel只能写
+- 通过RandomAccessFile是否能读写需要根据构造RandomAccessFile时的读写模式决定
+
+### 读取
+
+会从channel读取数据填充到ByteBuffer，返回值表示读到了多少个自己，`-1`表示到达了文件的末尾
+
+```java
+int readBytes = 0;
+while ((readBytes = channel.read(buffer)) != -1) {
+    ....
+}
+```
+
+### 写入
+
+写入的正确姿势如下：
+
+```java
+ByteBuffer buffer = ...;
+buffer.put(...);
+buffer.flip();		// 切换到读模式
+
+while (buffer.hasRemaining()) {
+    channel.write(buffer);
+}
+```
+
+在while中调用channel.write时因为write方法并不能保证一次将buffer中的内容全部写入channel
+
+### 关闭
+
+channel必须关闭，不过调用了FileInputStream、FileOutputStream或者RandowmAccessFile的close方法会间接的调用channel的close方法
+
+### 位置
+
+获取当前位置
+
+```java
+long pos = channel.position();
+```
+
+设置当前的位置
+
+```java
+channel.position(newPos);
+```
+
+设置当时位置时，如果设置为文件的末尾
+
+- 这是读取会返回-1
+- 这是写入，会追加内容，但要注意position超过了文件末尾，再写入时在新内容和原末尾之间会有空洞（00）
+
+### 大小
+
+使用size方法获取文件的大小
+
+### 强制写入
+
+操作系统出于性能的考虑，会将数据缓存，不是立刻写入磁盘。可以调用force(true)方法将文件内容和元数据（文件的权限灯信息）立刻写入磁盘
+
+
+
+## 2、两个Channel传输数据
+
+使用`TransferTo`方法，该方法可以快速、高效的将一个channel中的数据传输到另一个channel中，但一次只能传输2G的内容，另外：TransferTo方法底层使用零拷贝技术
+
+```java
+@Slf4j
+public class TestFileChannelTransferTo {
+    public static void main(String[] args) {
+        try (
+                // 读入数据
+                FileChannel from = new FileInputStream("input/words.txt").getChannel();
+                // 写出数据
+                FileChannel to = new FileOutputStream("input/wordsCopy2.txt").getChannel();
+        ) {
+            // 因为一次只能传输2G的数据，所以我们循环传输
+            long size = from.size();
+            // left变量代表还剩余多少个字节
+            for (long left = size; left > 0; ) {
+                log.debug("position:{}, left:{}", (size - left), left);
+                left -= from.transferTo((size - left), left, to);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+
+
+
+## 3、Path
+
+jdk7引入了Path和Paths类：
+
+- **Path**用来表示文件路径
+- **Paths**是工具类，用来获取Path实例
+
+```java
+Path source = Paths.get("1.txt");	// 相对路径，使用user.dir环境变量来定位1.txt
+
+Path source = Paths.get("d:\\1.txt");	// 绝对路径
+
+Path source = Paths.get("d:/1.txt");	// 绝对路径，同上
+
+Path projects = Paths.get("d:\\data","projects");	// 代表了 d:\data\projects
+```
+
+例如：
+
+```java
+Path path = Paths.get("d:\\data\\projects\\a\\..\\b");
+System.out.println(path);
+System.out.println(path.normalize());	// 正常化路径
+```
+
+会输出：
+
+```
+d:\data\projects\a\..\b
+d:\data\projects\b
+```
+
+
+
+## 4、Files
+
+### 检查文件是否存在
+
+```java
+Path path = Paths.get("helloworld/data.txt");
+System.out.println(Files.exist(path));
+```
+
+### 创建一级/多级目录
+
+**一级目录：**
+
+```java
+Path path = Paths.get("helloworld/d1");
+Files.createDircetory(path);
+```
+
+- 如果目录已存在，则会抛出FileAlreadyExistsException异常
+- 不能一次创建多级目录，否则会抛出NoSuchFileException异常
+
+**多级目录：**
+
+```java
+Path path = Paths.get("hellowrld/d1/d2");
+Files.createDircetories(path);
+```
+
+
+
+### 拷贝文件
+
+```java
+Path source = Paths.get("data.txt");
+Path target = Paths.get("data-copy.txt");
+
+Files.copy(source,target);
+```
+
+- 如果文件已存在，会抛出FileAlreadyExistsException异常
+
+如果希望用source覆盖掉target，需要用StandardCopyOption来控制
+
+```java
+File.copy(source,target,StandardCopyOption.REPLACE_EXISTING);
+```
+
+
+
+### 移动文件
+
+```java
+Path source = Paths.get("data.txt");
+Path target = Paths.get("data-move.txt");
+
+Files.move(source,target,StandardCopyOption.ATOMIC_MOVE);
+```
+
+
+
+### 删除文件
+
+```java
+Path target = Paths.get("data.txt");
+
+Files.delete(target);
+```
+
+如果文件不存在，会抛出NoSuchFileException
+
+
+
+### 删除目录
+
+```java
+Path target = Paths.get("d1");
+
+Files.delete(target);
+```
+
+如果目录还有内容，会抛出DirectoryNotEmptyException
+
+
+
+### 遍历目录
+
+使用`walkFileTree`方法：
+
+```java
+public class TestFileWalkFileTree {
+    public static void main(String[] args) throws IOException {
+        AtomicInteger disCount = new AtomicInteger();
+        AtomicInteger fileCount = new AtomicInteger();
+        Files.walkFileTree(Paths.get("D:\\Program Files\\Java\\jdk1.8.0_301"), new SimpleFileVisitor<Path>() {
+            // 访问目录
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                disCount.incrementAndGet();
+                System.out.println("====>" + dir);
+                return super.preVisitDirectory(dir, attrs);
+            }
+
+            // 访问文件
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                System.out.println(file);
+                fileCount.incrementAndGet();
+                return super.visitFile(file, attrs);
+            }
+        });
+
+        System.out.println("dir count: " + disCount);
+        System.out.println("file count: " + fileCount);
+    }
+}
+```
+
+检查有多少以`.jar`结尾的文件：
+
+```java
+public class GetJarCount {
+    public static void main(String[] args) throws IOException {
+        AtomicInteger jarCount = new AtomicInteger();
+        Files.walkFileTree(Paths.get("D:\\Program Files\\Java\\jdk1.8.0_301"),new SimpleFileVisitor<Path>(){
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.toString().endsWith(".jar")) {
+                    System.out.println(file);
+                    jarCount.incrementAndGet();
+                }
+                return super.visitFile(file, attrs);
+            }
+        });
+        System.out.println("jar count: " + jarCount);
+    }
+}
+```
+
+拷贝多级目录：
+
+```java
+public class CopyDirectory {
+
+    public static void main(String[] args) throws IOException {
+        String source = "D:\\img";
+        String target = "D:\\img-copy";
+
+        Files.walk(Paths.get(source)).forEach(path -> {
+            try {
+                String targetName = path.toString().replace(source, target);
+                // 如果是目录
+                if (Files.isDirectory(path)) {
+                    Files.createDirectory(Paths.get(targetName));
+                } else {
+                    // 是文件
+                    Files.copy(path,Paths.get(targetName));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+}
+```
+
+删除多级目录：
+
+```java
+public class DeleteDircetory {
+
+    public static void main(String[] args) throws IOException {
+        Files.walkFileTree(Paths.get("D:\\img-copy"), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return super.visitFile(file, attrs);
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return super.postVisitDirectory(dir, exc);
+            }
+        });
+    }
+}
+```
+
 
 
 
