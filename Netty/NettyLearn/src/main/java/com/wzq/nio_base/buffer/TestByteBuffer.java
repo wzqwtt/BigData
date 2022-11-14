@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel;
  * @create 2022-11-12 21:31
  */
 @Slf4j
-public class TestByBuffer {
+public class TestByteBuffer {
     public static void main(String[] args) {
         // FileChannel
         // 1、获取文件输入流FileInputStream

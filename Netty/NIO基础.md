@@ -1,6 +1,6 @@
 # NIO基础
 
-
+> 本blog中所有code均在[com.wzq.nio_base](https://github.com/wzqwtt/BigData/tree/master/Netty/NettyLearn/src/main/java/com/wzq/nio_base)包下
 
 # 一、NIO三大组件
 
@@ -136,10 +136,10 @@ private int limit;
 private int capacity;
 ```
 
-- **capacity：**缓冲区的容量。通过构造函数或者`allocate(int capacity)`赋予，**一旦设置，无法更改**
+- **capacity：** 缓冲区的容量。通过构造函数或者`allocate(int capacity)`赋予，**一旦设置，无法更改**
 - **limit：**缓冲区的界限。位于limit后的数据不可读写。缓冲区的limit不能为负，并且**不能大于其容量**
 - **position：**下一个读写位置的索引（下标）。缓冲区的位置不能为负，并且**不能大于limit**
-- **mark：**记录当前position的位置。**position被改变后，可以通过reset()方法恢复到mark的位置**
+- **mark：** 记录当前position的位置。**position被改变后，可以通过reset()方法恢复到mark的位置**
 
 以上四个属性必须满足：
 
@@ -311,13 +311,529 @@ public final Buffer reset() {
 
 
 
+再开始之前，先引入一个ByteBuffer调试工具类，使用这个工具类需要先导入Netty依赖：
+
+```xml
+<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-all</artifactId>
+    <version>4.1.84.Final</version>
+</dependency>
+```
+
+```java
+/**
+ * @author Panwen Chen
+ * @date 2021/4/12 15:59
+ */
+public class ByteBufferUtil {
+    private static final char[] BYTE2CHAR = new char[256];
+    private static final char[] HEXDUMP_TABLE = new char[256 * 4];
+    private static final String[] HEXPADDING = new String[16];
+    private static final String[] HEXDUMP_ROWPREFIXES = new String[65536 >>> 4];
+    private static final String[] BYTE2HEX = new String[256];
+    private static final String[] BYTEPADDING = new String[16];
+
+    static {
+        final char[] DIGITS = "0123456789abcdef".toCharArray();
+        for (int i = 0; i < 256; i++) {
+            HEXDUMP_TABLE[i << 1] = DIGITS[i >>> 4 & 0x0F];
+            HEXDUMP_TABLE[(i << 1) + 1] = DIGITS[i & 0x0F];
+        }
+
+        int i;
+
+        // Generate the lookup table for hex dump paddings
+        for (i = 0; i < HEXPADDING.length; i++) {
+            int padding = HEXPADDING.length - i;
+            StringBuilder buf = new StringBuilder(padding * 3);
+            for (int j = 0; j < padding; j++) {
+                buf.append("   ");
+            }
+            HEXPADDING[i] = buf.toString();
+        }
+
+        // Generate the lookup table for the start-offset header in each row (up to 64KiB).
+        for (i = 0; i < HEXDUMP_ROWPREFIXES.length; i++) {
+            StringBuilder buf = new StringBuilder(12);
+            buf.append(StringUtil.NEWLINE);
+            buf.append(Long.toHexString(i << 4 & 0xFFFFFFFFL | 0x100000000L));
+            buf.setCharAt(buf.length() - 9, '|');
+            buf.append('|');
+            HEXDUMP_ROWPREFIXES[i] = buf.toString();
+        }
+
+        // Generate the lookup table for byte-to-hex-dump conversion
+        for (i = 0; i < BYTE2HEX.length; i++) {
+            BYTE2HEX[i] = ' ' + StringUtil.byteToHexStringPadded(i);
+        }
+
+        // Generate the lookup table for byte dump paddings
+        for (i = 0; i < BYTEPADDING.length; i++) {
+            int padding = BYTEPADDING.length - i;
+            StringBuilder buf = new StringBuilder(padding);
+            for (int j = 0; j < padding; j++) {
+                buf.append(' ');
+            }
+            BYTEPADDING[i] = buf.toString();
+        }
+
+        // Generate the lookup table for byte-to-char conversion
+        for (i = 0; i < BYTE2CHAR.length; i++) {
+            if (i <= 0x1f || i >= 0x7f) {
+                BYTE2CHAR[i] = '.';
+            } else {
+                BYTE2CHAR[i] = (char) i;
+            }
+        }
+    }
+
+    /**
+     * 打印所有内容
+     * @param buffer
+     */
+    public static void debugAll(ByteBuffer buffer) {
+        int oldlimit = buffer.limit();
+        buffer.limit(buffer.capacity());
+        StringBuilder origin = new StringBuilder(256);
+        appendPrettyHexDump(origin, buffer, 0, buffer.capacity());
+        System.out.println("+--------+-------------------- all ------------------------+----------------+");
+        System.out.printf("position: [%d], limit: [%d]\n", buffer.position(), oldlimit);
+        System.out.println(origin);
+        buffer.limit(oldlimit);
+    }
+
+    /**
+     * 打印可读取内容
+     * @param buffer
+     */
+    public static void debugRead(ByteBuffer buffer) {
+        StringBuilder builder = new StringBuilder(256);
+        appendPrettyHexDump(builder, buffer, buffer.position(), buffer.limit() - buffer.position());
+        System.out.println("+--------+-------------------- read -----------------------+----------------+");
+        System.out.printf("position: [%d], limit: [%d]\n", buffer.position(), buffer.limit());
+        System.out.println(builder);
+    }
+
+    private static void appendPrettyHexDump(StringBuilder dump, ByteBuffer buf, int offset, int length) {
+        if (MathUtil.isOutOfBounds(offset, length, buf.capacity())) {
+            throw new IndexOutOfBoundsException(
+                    "expected: " + "0 <= offset(" + offset + ") <= offset + length(" + length
+                            + ") <= " + "buf.capacity(" + buf.capacity() + ')');
+        }
+        if (length == 0) {
+            return;
+        }
+        dump.append(
+                "         +-------------------------------------------------+" +
+                        StringUtil.NEWLINE + "         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |" +
+                        StringUtil.NEWLINE + "+--------+-------------------------------------------------+----------------+");
+
+        final int startIndex = offset;
+        final int fullRows = length >>> 4;
+        final int remainder = length & 0xF;
+
+        // Dump the rows which have 16 bytes.
+        for (int row = 0; row < fullRows; row++) {
+            int rowStartIndex = (row << 4) + startIndex;
+
+            // Per-row prefix.
+            appendHexDumpRowPrefix(dump, row, rowStartIndex);
+
+            // Hex dump
+            int rowEndIndex = rowStartIndex + 16;
+            for (int j = rowStartIndex; j < rowEndIndex; j++) {
+                dump.append(BYTE2HEX[getUnsignedByte(buf, j)]);
+            }
+            dump.append(" |");
+
+            // ASCII dump
+            for (int j = rowStartIndex; j < rowEndIndex; j++) {
+                dump.append(BYTE2CHAR[getUnsignedByte(buf, j)]);
+            }
+            dump.append('|');
+        }
+
+        // Dump the last row which has less than 16 bytes.
+        if (remainder != 0) {
+            int rowStartIndex = (fullRows << 4) + startIndex;
+            appendHexDumpRowPrefix(dump, fullRows, rowStartIndex);
+
+            // Hex dump
+            int rowEndIndex = rowStartIndex + remainder;
+            for (int j = rowStartIndex; j < rowEndIndex; j++) {
+                dump.append(BYTE2HEX[getUnsignedByte(buf, j)]);
+            }
+            dump.append(HEXPADDING[remainder]);
+            dump.append(" |");
+
+            // Ascii dump
+            for (int j = rowStartIndex; j < rowEndIndex; j++) {
+                dump.append(BYTE2CHAR[getUnsignedByte(buf, j)]);
+            }
+            dump.append(BYTEPADDING[remainder]);
+            dump.append('|');
+        }
+
+        dump.append(StringUtil.NEWLINE +
+                "+--------+-------------------------------------------------+----------------+");
+    }
+
+    private static void appendHexDumpRowPrefix(StringBuilder dump, int row, int rowStartIndex) {
+        if (row < HEXDUMP_ROWPREFIXES.length) {
+            dump.append(HEXDUMP_ROWPREFIXES[row]);
+        } else {
+            dump.append(StringUtil.NEWLINE);
+            dump.append(Long.toHexString(rowStartIndex & 0xFFFFFFFFL | 0x100000000L));
+            dump.setCharAt(dump.length() - 9, '|');
+            dump.append('|');
+        }
+    }
+
+    public static short getUnsignedByte(ByteBuffer buffer, int index) {
+        return (short) (buffer.get(index) & 0xFF);
+    }
+}
+```
+
+
+
+调用ByteBuffer方法：
+
+```java
+@Slf4j
+public class TestByteBufferMethod {
+
+    public static void main(String[] args) {
+        // 构造一个ByteBuffer
+        ByteBuffer buffer = ByteBuffer.allocate(10);
+
+        // 向buffer中写入1个字节的数据
+        buffer.put((byte) 97);
+        // 使用ByteBufferUtil工具类，查看buffer状态
+        ByteBufferUtil.debugAll(buffer);
+
+        // 向buffer中写入4个字节的数据
+        buffer.put(new byte[]{98, 99, 100, 101});
+        ByteBufferUtil.debugAll(buffer);
+
+        // 获取数据
+        buffer.flip();
+        // flip之后打印三个属性的值
+        log.debug("capacity:{},limit:{},position:{}", buffer.capacity(), buffer.limit(), buffer.position());
+        System.out.println(buffer.get());
+        System.out.println(buffer.get());
+        ByteBufferUtil.debugAll(buffer);
+
+        // 使用mark和reset标记
+        buffer.mark();
+        System.out.println(buffer.get());
+        System.out.println(buffer.get());
+        buffer.reset();
+        ByteBufferUtil.debugAll(buffer);
+
+        // 使用compact切换到写模式
+        buffer.compact();
+        ByteBufferUtil.debugAll(buffer);
+
+        // 再次写入值
+        buffer.put((byte) 102);
+        buffer.put((byte) 103);
+        ByteBufferUtil.debugAll(buffer);
+    }
+}
+```
+
+输出：
+
+```java
+// 写入一个字节的数据
++--------+-------------------- all ------------------------+----------------+
+position: [1], limit: [10]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 61 00 00 00 00 00 00 00 00 00                   |a.........      |
++--------+-------------------------------------------------+----------------+
+
+// 继续写入四个字节的数据
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [10]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 61 62 63 64 65 00 00 00 00 00                   |abcde.....      |
++--------+-------------------------------------------------+----------------+
+
+// 打印capacity、limit、position              
+19:21:55.787 [main] DEBUG com.wzq.nio_base.buffer.TestByteBufferMethod - capacity:10,limit:5,position:0
+97
+98
+    
+// 获取两个字节的数据     
++--------+-------------------- all ------------------------+----------------+
+position: [2], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 61 62 63 64 65 00 00 00 00 00                   |abcde.....      |
++--------+-------------------------------------------------+----------------+
+99
+100
+             
+// 标记完数据，再次reset回去              
++--------+-------------------- all ------------------------+----------------+
+position: [2], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 61 62 63 64 65 00 00 00 00 00                   |abcde.....      |
++--------+-------------------------------------------------+----------------+
+
+// 使用compact切换到写模式              
++--------+-------------------- all ------------------------+----------------+
+position: [3], limit: [10]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 63 64 65 64 65 00 00 00 00 00                   |cdede.....      |
++--------+-------------------------------------------------+----------------+
+             
+// 再次写入两个字节的数据              
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [10]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 63 64 65 66 67 00 00 00 00 00                   |cdefg.....      |
++--------+-------------------------------------------------+----------------+
+```
+
+
+
 ## 5、字符串与ByteBuffer的相互转换
 
+**方法一：**
+
+**编码**：字符串调用getByte方法获得byte数组，将byte数组放入ByteBuffer中
+
+**解码**：**先调用ByteBuffer的flip方法，然后通过StandardCharsets的decoder方法解码**
+
+```java
+public class Translate {
+    public static void main(String[] args) {
+        // 准备两个字符串
+        String str1 = "hello";
+        String str2 = "";
+
+        ByteBuffer buffer1 = ByteBuffer.allocate(16);
+        // 通过字符串的getByte方法获得字节数组，放入缓冲区中
+        buffer1.put(str1.getBytes());
+        ByteBufferUtil.debugAll(buffer1);
+
+        // 将缓冲区中的数据转化为字符串
+        // 切换模式
+        buffer1.flip();
+        
+        // 通过StandardCharsets解码，获得CharBuffer，再通过toString获得字符串
+        str2 = StandardCharsets.UTF_8.decode(buffer1).toString();
+        System.out.println(str2);
+        ByteBufferUtil.debugAll(buffer1);
+    }
+}
+```
+
+运行结果
+
+```
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [16]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f 00 00 00 00 00 00 00 00 00 00 00 |hello...........|
++--------+-------------------------------------------------+----------------+
+hello
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f 00 00 00 00 00 00 00 00 00 00 00 |hello...........|
++--------+-------------------------------------------------+----------------+Copy
+```
 
 
-## 5、粘包与半包
+
+**方法二：**
+
+**编码**：通过StandardCharsets的encode方法获得ByteBuffer，此时获得的ByteBuffer为读模式，无需通过flip切换模式
+
+**解码**：通过StandardCharsets的decoder方法解码
+
+```java
+public class Translate {
+    public static void main(String[] args) {
+        // 准备两个字符串
+        String str1 = "hello";
+        String str2 = "";
+
+        // 通过StandardCharsets的encode方法获得ByteBuffer
+        // 此时获得的ByteBuffer为读模式，无需通过flip切换模式
+        ByteBuffer buffer1 = StandardCharsets.UTF_8.encode(str1);
+        ByteBufferUtil.debugAll(buffer1);
+
+        // 将缓冲区中的数据转化为字符串
+        // 通过StandardCharsets解码，获得CharBuffer，再通过toString获得字符串
+        str2 = StandardCharsets.UTF_8.decode(buffer1).toString();
+        System.out.println(str2);
+        ByteBufferUtil.debugAll(buffer1);
+    }
+}
+```
+
+运行结果
+
+```
++--------+-------------------- all ------------------------+----------------+
+position: [0], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f                                  |hello           |
++--------+-------------------------------------------------+----------------+
+hello
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f                                  |hello           |
++--------+-------------------------------------------------+----------------+Copy
+```
 
 
+
+**方法三：**
+
+**编码**：字符串调用getByte()方法获得字节数组，将字节数组传给**ByteBuffer的wrap()方法**，通过该方法获得ByteBuffer。**同样无需调用flip方法切换为读模式**
+
+**解码**：通过StandardCharsets的decoder方法解码
+
+```java
+public class Translate {
+    public static void main(String[] args) {
+        // 准备两个字符串
+        String str1 = "hello";
+        String str2 = "";
+
+        // 通过StandardCharsets的encode方法获得ByteBuffer
+        // 此时获得的ByteBuffer为读模式，无需通过flip切换模式
+        ByteBuffer buffer1 = ByteBuffer.wrap(str1.getBytes());
+        ByteBufferUtil.debugAll(buffer1);
+
+        // 将缓冲区中的数据转化为字符串
+        // 通过StandardCharsets解码，获得CharBuffer，再通过toString获得字符串
+        str2 = StandardCharsets.UTF_8.decode(buffer1).toString();
+        System.out.println(str2);
+        ByteBufferUtil.debugAll(buffer1);
+    }
+}
+```
+
+运行结果
+
+```
++--------+-------------------- all ------------------------+----------------+
+position: [0], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f                                  |hello           |
++--------+-------------------------------------------------+----------------+
+hello
++--------+-------------------- all ------------------------+----------------+
+position: [5], limit: [5]
+         +-------------------------------------------------+
+         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |
++--------+-------------------------------------------------+----------------+
+|00000000| 68 65 6c 6c 6f                                  |hello           |
++--------+-------------------------------------------------+----------------+
+```
+
+
+
+## 6、粘包与半包
+
+**现象：**
+
+网络上有多条数据发送给服务端，数据之间使用`\n`进行分隔
+
+但由于某种原因这些数据在接收时，被进行了重新组合，例如原始数据有3条：
+
+```
+Hello,world\n
+I'm wzqwtt\n
+How are you?\n
+```
+
+变成了下面的两个ByteBuffer（粘包与半包）
+
+```
+Hello,world\nI'm wzqwtt\nHo
+w are you?\n
+```
+
+
+
+**出现原因：**
+
+- **粘包：** 发送方在发送数据时，并不是一条一条的发送数据，而是**将数据整合在一起**，当数据达到一定的数量后再一起发送。这就会导致多条信息被放在一个缓冲区被一起发送出去
+- **半包：** 接收方的缓冲区大小是有限的，当接收方的缓存区满了以后，就需要**将信息截断**，等缓冲区空了以后再继续放入数据。这就会发生一段完整的数据最后被截断的现象
+
+
+
+**解决办法：**
+
+- 通过get(index)方法遍历ByteBuffer，遇到分隔符时进行处理。注意：get(index)不会改变position的值
+  - 记录该段数据长度，以便于申请对应大小的缓冲区
+  - 将缓冲区的数据通过get()方法写入到target中
+- 调用**compact方法**切换模式，因为缓冲区中可能还有未读的数据
+
+```java
+@Slf4j
+public class StickyAndHalfPack {
+
+    public static void main(String[] args) {
+        // 模拟粘包半包问题
+        ByteBuffer source = ByteBuffer.allocate(32);
+        source.put("Hello,world\nI'm wzqwtt\nHo".getBytes());
+        split(source);  // 调用方法处理粘包半包问题
+        source.put("w are you?\n".getBytes());
+        split(source);  // 调用方法处理粘包半包问题
+    }
+
+    private static void split(ByteBuffer source) {
+        // 切换到读模式
+        source.flip();
+        for (int i = 0; i < source.limit(); i++) {
+            // 找到一条完整信息
+            if (source.get(i) == '\n') {
+                int length = i + 1 - source.position();
+                // 把这条完整消息存入新的ByteBuffer
+                ByteBuffer target = ByteBuffer.allocate(length);
+                // 从source读，向target写
+                for (int j = 0; j < length; j++) {
+                    target.put(source.get());
+                }
+                ByteBufferUtil.debugAll(target);
+            }
+        }
+        source.compact();
+    }
+}
+```
 
 
 
