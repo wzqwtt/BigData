@@ -1061,7 +1061,24 @@ Files.delete(target);
 
 ### 遍历目录
 
-使用`walkFileTree`方法：
+可以**使用Files工具类中的walkFileTree(Path, FileVisitor)方法**，其中需要传入两个参数
+
+- Path：文件起始路径
+
+- FileVisitor：文件访问器，
+
+  使用访问者模式
+
+  - 接口的实现类
+
+    SimpleFileVisitor
+
+    有四个方法
+
+    - preVisitDirectory：访问目录前的操作
+    - visitFile：访问文件的操作
+    - visitFileFailed：访问文件失败时的操作
+    - postVisitDirectory：访问目录后的操作
 
 ```java
 public class TestFileWalkFileTree {
