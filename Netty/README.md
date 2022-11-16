@@ -1,6 +1,6 @@
 # Netty
 
-<img src="img/netty.png" style="zoom: 80%;" />
+<img src="img/netty.png" style="zoom: 50%;" />
 
 目录`NettyLearn`是一个Maven工程，里面包含使用Netty的一些案例代码
 
