@@ -1183,9 +1183,164 @@ public class DeleteDircetory {
 
 
 
-
-
 # 四、网络编程
+
+## 1、非阻塞 VS 阻塞
+
+**阻塞：**
+
+- 在没有数据可读的时候，包括数据复制过程中，线程必须阻塞等待，不会占用CPU，线程相当于闲置
+- 32位JVM一个线程320k，64位JVM一个线程1024k，为了减少线程数，需要采用线程池技术
+- 但即便使用了线程池，如果有很多连接建立，但长时间的inactive，会阻塞线程池中所有线程
+
+接下来，使用NIO的演示阻塞：
+
+Server：
+
+```java
+@Slf4j
+public class Server {
+    public static void main(String[] args) throws IOException {
+        // 使用NIO来理解线程的阻塞模式
+        // 0. ByteBuffer
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+
+        // 1、创建了服务器
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+
+        // 2、绑定监听端口
+        ssc.bind(new InetSocketAddress(7));
+
+        // 3、连接集合
+        ArrayList<SocketChannel> channels = new ArrayList<>();
+        while (true) {
+            // 4、accept，建立与客户端的连接， SocketChannel用于客户端和服务端的通信
+            log.debug("connecting...");
+            SocketChannel sc = ssc.accept();
+            log.debug("connected... {}", sc);
+            // 将新建立的连接加入到集合中
+            channels.add(sc);
+            // 遍历已建立连接的集合，看是否有需要读取的数据
+            for (SocketChannel channel : channels) {
+                log.debug("before read... {}", channel);
+                channel.read(buffer);
+                buffer.flip();
+                ByteBufferUtil.debugRead(buffer);
+                buffer.clear();
+                log.debug("after read... {}", channel);
+            }
+        }
+    }
+}
+```
+
+Client：
+
+![image-20221115165551465](img/image-20221115165551465.png)
+
+
+
+此时先运行Server，如果没有client连接的情况下，会在`accept()`方法运行时候阻塞
+
+![image-20221115165854985](img/image-20221115165854985.png)
+
+这时，以Debug的方式运行Client，如果客户端没有消息发送给Server，会在`channel.read(buf)`方法上面阻塞
+
+![image-20221115170057120](img/image-20221115170057120.png)
+
+读者也可以试试再启动几个client，如果第一个channel读取不到任何信息，那么它将永远阻塞在这里
+
+
+
+**非阻塞：**
+
+- 在某个Channel没有可读事件时，线程不必阻塞，它可以去处理其他有可读事件的Channel
+- 数据复制过程中，线程实际还是阻塞的
+- 写数据时，线程只是等待数据写入Channel即可，无需等Channel通过网络把数据发送出去
+
+更改上面的代码很简单，只需要改动ServerSocketChannel和SocketChannel，加一个`configureBlocking(false)`方法即可：
+
+```java
+@Slf4j
+public class Server {
+
+    public static void main(String[] args) throws IOException {
+        // 0、创建一个ByteBuffer
+        ByteBuffer buffer = ByteBuffer.allocate(10);
+
+        // 1、创建一个ServerSocketChannel
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        // 2、绑定端口
+        ssc.bind(new InetSocketAddress(7));
+        // 3、配置非阻塞
+        ssc.configureBlocking(false);
+
+        ArrayList<SocketChannel> channels = new ArrayList<>();
+        while (true) {
+            log.debug("connecting...");
+            // 连接
+            SocketChannel sc = ssc.accept();
+            // 因为accept不阻塞，如果有SocketChannel才加入channels
+            if (sc != null) {
+                log.debug("connected... {}", sc);
+                // SocketChannel也要配置非阻塞
+                sc.configureBlocking(false);
+                channels.add(sc);
+            }
+
+            for (SocketChannel channel : channels) {
+                int read = channel.read(buffer);
+                // 因为read方法不阻塞，因此只有有传输的字节才会把他读出来
+                if (read > 0) {
+                    buffer.flip();
+                    ByteBufferUtil.debugRead(buffer);
+                    buffer.clear();
+                    log.debug("read: {}", channel);
+                }
+            }
+        }
+    }
+
+}
+```
+
+此时如果没有client连接过来，他会一直打印：
+
+![image-20221115171406024](img/image-20221115171406024.png)
+
+这证明在`accept()`时候没有阻塞，以Debug的方式启动Client，也不会阻塞在`read`方法
+
+
+
+## 2、Selector
+
+在上面的code中，用了一个`ArrayList`存放Channel，每次有新的连接就会放入集合，其实NIO提供了`Selector`做一部分的功能
+
+Selector的使命就是完成IO的**多路复用**，其主要的工作是通道的注册、监听、事件查询
+
+可供Selector监控的事件有四种：
+
+```java
+// 数据可读入时触发，有因为接收能力弱，数据咱不能读入的情况
+public static final int OP_READ = 1 << 0;
+
+// 数据可写出时触发，有因为发送能力弱，数据暂不能写出的情况
+public static final int OP_WRITE = 1 << 2;
+
+// 客户端连接成功时触发
+public static final int OP_CONNECT = 1 << 3;
+
+// 服务器端成功接受连接时触发
+public static final int OP_ACCEPT = 1 << 4;
+```
+
+
+
+完整的Selector案例：[com.wzq.nio_base.selector.Server](./https://github.com/wzqwtt/BigData/tree/master/Netty/NettyLearn/src/main/java/com/wzq/nio_base/selector/Server)
+
+在这个案例中：**解决了连接事件、可读事件、可写事件、客户端断开异常问题、消息边界问题**，具有良好的注释，这里不再赘述
+
+
 
 
 
