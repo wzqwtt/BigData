@@ -1,9 +1,9 @@
 # 1、原生NIO存在的问题
 
-- **NIO****的类库和****API****繁杂，使用麻烦**：需要熟练掌握Selecotor、ServerSocketChannel、SocketChannel、ByteBuffer等。
+- **NIO的类库和API繁杂，使用麻烦**：需要熟练掌握Selecotor、ServerSocketChannel、SocketChannel、ByteBuffer等。
 - **需要具备其他的额外技能**：要熟悉Java多线程编程，因为NIO编程涉及到Reactor模式，你必须对多线程和网络编程非常熟悉，才能编写出高质量的NIO程序。
 - **开发工作量和难度都非常大**：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常流的处理等等。
-- **JDK     NIO****的****Bug**：例如臭名昭著的Epoll Bug，它会导致Selector空轮询，最终导致CPU 100%。直到JDK1.7 版本该问题仍旧存在，没有被根本解决。
+- **JDK NIO的Bug**：例如臭名昭著的Epoll Bug，它会导致Selector空轮询，最终导致CPU 100%。直到JDK1.7 版本该问题仍旧存在，没有被根本解决。
 
  
 

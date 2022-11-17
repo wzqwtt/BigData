@@ -1,6 +1,6 @@
 # Netty
 
-<img src="img/netty.png" style="zoom: 50%;" />
+<img src="img/netty.png" height="150px" />
 
 目录`NettyLearn`是一个Maven工程，里面包含使用Netty的一些案例代码
 
@@ -10,12 +10,12 @@
 
 学习路线：
 
-| 模块      | Blog                              |
-| --------- | --------------------------------- |
-| 前置知识  | [NIO基础](./NIO基础.md)           |
-|           | [Reactor模式](./Reactor模式.md)   |
-| Netty入门 | [第一个Netty程序](./Netty入门.md) |
-|           | 更新中                            |
+| 模块      | Blog                                            |
+| --------- | ----------------------------------------------- |
+| 前置知识  | [NIO基础](./NIO基础.md)                         |
+|           | [Reactor模式](./Reactor模式.md)                 |
+| Netty入门 | [第一个Netty程序](./Netty入门.md)               |
+|           | [EventLoop和线程模型](./EventLoop和线程模型.md) |
 
 
 
