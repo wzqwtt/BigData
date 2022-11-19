@@ -6,14 +6,14 @@
 
 在Netty中，Channel有下列几个API：
 
-- **close()：**用来关闭Channel
-- **closeFuture()：**用来处理Channel的关闭
-  - **sync方法**作用是**同步**等待Channel关闭
-  - **addListener方法**作用是**异步**等待Channel关闭
-- **pipeline()：**可以用来添加处理器
-- **write()：**将数据写入缓冲区
-- **flush()：**把缓冲区的数据立马刷新出去
-- **writeAndFluse()：**将数据写入并刷出
+- **close()：** 用来关闭Channel
+- **closeFuture()：** 用来处理Channel的关闭
+  - **sync方法** 作用是**同步**等待Channel关闭
+  - **addListener方法** 作用是**异步**等待Channel关闭
+- **pipeline()：** 可以用来添加处理器
+- **write()：** 将数据写入缓冲区
+- **flush()：** 把缓冲区的数据立马刷新出去
+- **writeAndFluse()：** 将数据写入并刷出
 
 ChannelFuture里面封装了一系列同步或异步的方法用来解决Channel的连接、关闭等问题。**可以使用ChannelFuture来获取Channel**
 
