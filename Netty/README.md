@@ -10,12 +10,13 @@
 
 学习路线：
 
-| 模块      | Blog                                            |
-| --------- | ----------------------------------------------- |
-| 前置知识  | [NIO基础](./NIO基础.md)                         |
-|           | [Reactor模式](./Reactor模式.md)                 |
-| Netty入门 | [第一个Netty程序](./Netty入门.md)               |
-|           | [EventLoop和线程模型](./EventLoop和线程模型.md) |
+| 模块      | Blog                                                  |
+| --------- | ----------------------------------------------------- |
+| 前置知识  | [NIO基础](./NIO基础.md)                               |
+|           | [Reactor模式](./Reactor模式.md)                       |
+| Netty入门 | [第一个Netty程序](./Netty入门.md)                     |
+|           | [EventLoop和线程模型](./EventLoop和线程模型.md)       |
+|           | [Channel和ChannelFuture](./Channel和ChannelFuture.md) |
 
 
 
