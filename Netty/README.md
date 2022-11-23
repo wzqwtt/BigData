@@ -19,7 +19,7 @@
 |               | [Channel和ChannelFuture](./Channel和ChannelFuture.md)        |
 |               | [ChannelHandler & ChannelPipeline](./ChannelHandler与ChannelPipeline.md) |
 |               | [Netty数据容器ByteBuf](./ByteBuf.md)                         |
-|               | 编解码器Codec                                                |
+|               | [编解码器Codec](./编解码器.md)                               |
 | Netty应用     | 粘包与半包                                                   |
 |               | 协议设计与解析                                               |
 |               | 使用Netty构建一个聊天系统                                    |
